@@ -75,7 +75,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
                 <Link to="/profile" className="dropdown-item">
                   <i className="fa-solid fa-user"></i> Profile
                 </Link>
-                <Link to="/dashboard" className="dropdown-item">
+                <Link to="/admin-panel" className="dropdown-item">
                   <i className="fa-solid fa-table-columns"></i> Dashboard
                 </Link>
                 <button className="dropdown-item logout-btn" onClick={handleLogout}>
