@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import StudentLogin from "./layout/StudentLogin";
 import AdminLogin from "./layout/AdminLogin";
+import Profile from "./pages/Profile";
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="student-login" element={<StudentLogin />} />
           <Route path="admin-login" element={<AdminLogin />} />
+          <Route path="profile" element={<Profile darkMode={darkMode} toggleTheme={toggleTheme} />} />
         </Routes>
         <Footer darkMode={darkMode} toggleTheme={toggleTheme} />
       </Router>

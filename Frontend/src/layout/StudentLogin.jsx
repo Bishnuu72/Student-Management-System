@@ -41,11 +41,11 @@ const StudentLogin = () => {
                 </button>
               </div>
 
-              <div className="mt-3 text-center">
+              {/* <div className="mt-3 text-center">
                 <a href="/" className="text-muted small">
                   Forgot Username / Password?
                 </a>
-              </div>
+              </div> */}
             </form>
 
             {/* Back to Home */}
