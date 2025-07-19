@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import userImg from '../../assets/profile.jpg';
+import StudentTable from './StudentTable';
 
 const AdminDashboard = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('dashboard');
+
   const dropdownRef = useRef(null);
   const avatarRef = useRef(null);
 
@@ -36,19 +39,29 @@ const AdminDashboard = () => {
     <div className="dashboard-container">
       <aside className="sidebar">
         <div className="admin-profile">
-          <img
-            src={userImg}
-            alt="User Avatar"
-            className="avatar-img"
-            // Removed onClick
-          />
+          <img src={userImg} alt="User Avatar" className="avatar-img" />
           <p className="admin-email">admin@gmail.com</p>
         </div>
         <nav className="sidebar-menu">
           <ul>
-            <li className="active"><i className="fa-solid fa-gauge"></i> Dashboard</li>
-            <li><i className="fa-solid fa-book"></i> Courses</li>
-            <li><i className="fa-solid fa-user-graduate"></i> Students</li>
+            <li
+              className={activeSection === 'dashboard' ? 'active' : ''}
+              onClick={() => setActiveSection('dashboard')}
+            >
+              <i className="fa-solid fa-gauge"></i> Dashboard
+            </li>
+            <li
+              className={activeSection === 'courses' ? 'active' : ''}
+              onClick={() => setActiveSection('courses')}
+            >
+              <i className="fa-solid fa-book"></i> Courses
+            </li>
+            <li
+              className={activeSection === 'students' ? 'active' : ''}
+              onClick={() => setActiveSection('students')}
+            >
+              <i className="fa-solid fa-user-graduate"></i> Students
+            </li>
           </ul>
         </nav>
       </aside>
@@ -86,42 +99,68 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        <div className="report-summary">
-          <div className="report-header">
-            <h3>Report Summary</h3>
-            <span className="refresh-icon"><i className="fa-solid fa-rotate"></i> Updated Report</span>
-          </div>
-          <div className="summary-cards">
-            <div className="card green">
-              <i className="fa-solid fa-book"></i>
-              <div className="card-title">Total Courses</div>
-              <div className="card-value">8</div>
-              <a href="#">View Courses</a>
+        {/* Section Switcher */}
+        {activeSection === 'dashboard' && (
+          <>
+            <div className="report-summary">
+              <div className="report-header">
+                <h3>Report Summary</h3>
+                <span className="refresh-icon">
+                  <i className="fa-solid fa-rotate"></i> Updated Report
+                </span>
+              </div>
+              <div className="summary-cards">
+                <div className="card green">
+                  <i className="fa-solid fa-book"></i>
+                  <div className="card-title">Total Courses</div>
+                  <div className="card-value">8</div>
+                  <a href="#">View Courses</a>
+                </div>
+                <div className="card pink">
+                  <i className="fa-solid fa-user-graduate"></i>
+                  <div className="card-title">Total Students</div>
+                  <div className="card-value">6</div>
+                  <a href="#">View Students</a>
+                </div>
+              </div>
             </div>
-            <div className="card pink">
-              <i className="fa-solid fa-user-graduate"></i>
-              <div className="card-title">Total Students</div>
-              <div className="card-value">6</div>
-              <a href="#">View Students</a>
-            </div>
-          </div>
-        </div>
 
-        <div className="analytics">
-          <h3>Basic Analytics</h3>
-          <div className="analytics-cards">
-            <div className="analytics-card">
-              <i className="fa-solid fa-user-graduate"></i>
-              <div className="analytics-title">Total Students</div>
-              <div className="analytics-value">6</div>
+            <div className="analytics">
+              <h3>Basic Analytics</h3>
+              <div className="analytics-cards">
+                <div className="analytics-card">
+                  <i className="fa-solid fa-user-graduate"></i>
+                  <div className="analytics-title">Total Students</div>
+                  <div className="analytics-value">6</div>
+                </div>
+                <div className="analytics-card">
+                  <i className="fa-solid fa-book"></i>
+                  <div className="analytics-title">Students per Course</div>
+                  <div className="analytics-value">0.75 avg</div>
+                </div>
+              </div>
             </div>
-            <div className="analytics-card">
-              <i className="fa-solid fa-book"></i>
-              <div className="analytics-title">Students per Course</div>
-              <div className="analytics-value">0.75 avg</div>
-            </div>
+          </>
+        )}
+
+        {activeSection === 'courses' && (
+          <div className="section-content">
+            <h3>Courses List</h3>
+            <ul>
+              <li>React for Beginners</li>
+              <li>Advanced Python</li>
+              <li>Machine Learning Basics</li>
+              <li>UI/UX Design</li>
+              <li>Java Development</li>
+            </ul>
           </div>
-        </div>
+        )}
+
+        {activeSection === 'students' && (
+          <div className="section-content">
+            <StudentTable />
+          </div>
+        )}
       </main>
     </div>
   );

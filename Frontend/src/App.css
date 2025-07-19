@@ -798,3 +798,62 @@ body {
   z-index: 10;
 }
 
+
+/* StudentTable CSS  */
+.student-table-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.student-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+}
+
+
+/* Add Student CSS */
+.student-form-container {
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+.student-form-container h2 {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+form label {
+  font-weight: 500;
+}
+
+form input {
+  border-radius: 8px;
+}
+
+.table th,
+.table td {
+  vertical-align: middle !important;
+}
+
+.table th {
+  background-color: #f7f9fc;
+}
+
+.btn-warning {
+  background-color: #f0ad4e;
+  border: none;
+}
+
+.btn-danger {
+  background-color: #d9534f;
+  border: none;
+}
+
+.btn-primary {
+  border-radius: 8px;
+  padding: 6px 20px;
+  font-weight: 500;
+}

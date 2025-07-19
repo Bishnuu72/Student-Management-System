@@ -8,6 +8,7 @@ import StudentLogin from "./layout/StudentLogin";
 import AdminLogin from "./layout/AdminLogin";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminPanel/AdminDashboard";
+import StudentState from "./context/StudentState";
 
 function LayoutWrapper({ darkMode, toggleTheme }) {
   const location = useLocation();
@@ -18,7 +19,7 @@ function LayoutWrapper({ darkMode, toggleTheme }) {
   const shouldShowLayout = !excludedRoutes.includes(location.pathname);
 
   return (
-    <>
+    <><StudentState>
       {shouldShowLayout && <Navbar darkMode={darkMode} toggleTheme={toggleTheme} />}
       <Routes>
         <Route path="/" element={<Home />} />
@@ -28,6 +29,7 @@ function LayoutWrapper({ darkMode, toggleTheme }) {
         <Route path="/admin-panel" element={<AdminDashboard darkMode={darkMode} toggleTheme={toggleTheme} />} />
       </Routes>
       {shouldShowLayout && <Footer darkMode={darkMode} toggleTheme={toggleTheme} />}
+      </StudentState>
     </>
   );
 }
