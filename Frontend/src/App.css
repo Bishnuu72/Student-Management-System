@@ -1,3 +1,4 @@
+/* Navbar Css */
 .custom-navbar {
   position: fixed;
   background: rgba(0, 0, 0, 0.5);
@@ -816,8 +817,18 @@ body {
 
 /* Add Student CSS */
 .student-form-container {
-  max-width: 950px;
-  margin: 0 auto;
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+  width: 100%;
+  border-left: none !important;
+}
+
+.full-form {
+  border-radius: 12px;
+  background-color: #ffffff;
+  padding: 20px;
 }
 
 .student-form-container h2 {
@@ -827,10 +838,13 @@ body {
 
 form label {
   font-weight: 500;
+  margin-bottom: 6px;
 }
 
 form input {
   border-radius: 8px;
+  padding: 10px;
+  font-size: 15px;
 }
 
 .table th,
@@ -854,6 +868,23 @@ form input {
 
 .btn-primary {
   border-radius: 8px;
-  padding: 6px 20px;
+  padding: 8px 24px;
   font-weight: 500;
+  font-size: 16px;
 }
+
+/* Responsive Improvements */
+@media (max-width: 768px) {
+  .student-form-container {
+    padding: 0 10px;
+  }
+
+  .table-responsive {
+    font-size: 14px;
+  }
+
+  form input {
+    font-size: 14px;
+  }
+}
+

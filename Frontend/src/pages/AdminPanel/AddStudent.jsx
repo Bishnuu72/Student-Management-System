@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import './StudentForm.css'; // Import external CSS
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-const StudentForm = () => {
+const AddStudent = () => {
   const [students, setStudents] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    password: '',
     age: '',
     course: '',
   });
@@ -30,7 +29,7 @@ const StudentForm = () => {
     } else {
       setStudents([...students, formData]);
     }
-    setFormData({ name: '', email: '', age: '', course: '' });
+    setFormData({ name: '', email: '', password: '', age: '', course: '' });
   };
 
   const handleEdit = (index) => {
@@ -48,10 +47,10 @@ const StudentForm = () => {
     <div className="container student-form-container mt-5 mb-5">
       <h2 className="text-center mb-4">Student Enrollment Form</h2>
 
-      <form className="shadow p-4 rounded bg-white" onSubmit={handleSubmit}>
-        <div className="row mb-3">
+      <form className="shadow-lg p-5 rounded bg-white full-form" onSubmit={handleSubmit}>
+        <div className="row mb-4">
           <div className="col-md-6">
-            <label className="form-label">Name</label>
+            <label className="form-label">Full Name</label>
             <input
               type="text"
               className="form-control"
@@ -59,23 +58,10 @@ const StudentForm = () => {
               value={formData.name}
               onChange={handleChange}
               required
+              placeholder="Enter student's full name"
             />
           </div>
-          <div className="col-md-6">
-            <label className="form-label">Email</label>
-            <input
-              type="email"
-              className="form-control"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="row mb-3">
-          <div className="col-md-6">
+          <div className="col-md-3">
             <label className="form-label">Age</label>
             <input
               type="number"
@@ -84,9 +70,10 @@ const StudentForm = () => {
               value={formData.age}
               onChange={handleChange}
               required
+              placeholder="Age"
             />
           </div>
-          <div className="col-md-6">
+          <div className="col-md-3">
             <label className="form-label">Course Enrolled</label>
             <input
               type="text"
@@ -95,6 +82,37 @@ const StudentForm = () => {
               value={formData.course}
               onChange={handleChange}
               required
+              placeholder="Course name"
+            />
+          </div>
+        </div>
+
+        <hr className="mb-4" />
+        <h5 className="mb-3 text-secondary">Login Credentials</h5>
+
+        <div className="row mb-4">
+          <div className="col-md-6">
+            <label className="form-label">Email Address</label>
+            <input
+              type="email"
+              className="form-control"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              placeholder="example@domain.com"
+            />
+          </div>
+          <div className="col-md-6">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              className="form-control"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Create a password"
             />
           </div>
         </div>
@@ -116,9 +134,10 @@ const StudentForm = () => {
               <thead className="table-primary">
                 <tr>
                   <th>Name</th>
-                  <th>Email</th>
                   <th>Age</th>
                   <th>Course</th>
+                  <th>Email</th>
+                  <th>Password</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -126,9 +145,10 @@ const StudentForm = () => {
                 {students.map((student, index) => (
                   <tr key={index}>
                     <td>{student.name}</td>
-                    <td>{student.email}</td>
                     <td>{student.age}</td>
                     <td>{student.course}</td>
+                    <td>{student.email}</td>
+                    <td>{student.password}</td>
                     <td>
                       <button
                         className="btn btn-sm btn-warning me-2"
@@ -154,4 +174,4 @@ const StudentForm = () => {
   );
 };
 
-export default StudentForm;
+export default AddStudent;

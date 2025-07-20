@@ -9,12 +9,13 @@ import AdminLogin from "./layout/AdminLogin";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminPanel/AdminDashboard";
 import StudentState from "./context/StudentState";
+import AddStudent from "./pages/AdminPanel/AddStudent";
 
 function LayoutWrapper({ darkMode, toggleTheme }) {
   const location = useLocation();
 
   // List of routes that should NOT show Navbar/Footer
-  const excludedRoutes = ["/admin-panel"];
+  const excludedRoutes = ["/admin-panel", "/add-student"];
 
   const shouldShowLayout = !excludedRoutes.includes(location.pathname);
 
@@ -27,6 +28,7 @@ function LayoutWrapper({ darkMode, toggleTheme }) {
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/profile" element={<Profile darkMode={darkMode} toggleTheme={toggleTheme} />} />
         <Route path="/admin-panel" element={<AdminDashboard darkMode={darkMode} toggleTheme={toggleTheme} />} />
+        <Route path="/add-student" element={<AddStudent />} />
       </Routes>
       {shouldShowLayout && <Footer darkMode={darkMode} toggleTheme={toggleTheme} />}
       </StudentState>

@@ -2,7 +2,7 @@ import React from 'react'
 import StudentContext from './StudentContext'
 
 const StudentState = (props) => {
-    const Students = [
+    const students = [
         {
         _id:1,
         name:"Manshi",
@@ -45,7 +45,7 @@ const StudentState = (props) => {
     }
     
   return (
-    <StudentContext.Provider value={{student}}>
+    <StudentContext.Provider value={{student, allStudent}}>
       {props.children}
     </StudentContext.Provider>
   )
