@@ -2,6 +2,11 @@ import React from 'react'
 import StudentContext from './StudentContext'
 
 const StudentState = (props) => {
+    const courses = [
+    "python", "java", "javascript", "dot Net",
+    ];
+    const [course, setCourse] = React.useState(courses);
+    
     const students = [
         {
         _id:1,
@@ -23,7 +28,7 @@ const StudentState = (props) => {
         email:"shruti@gmail.com",
         age:16,
         course:"javascript"
-    }
+    },
     ];
     const [student, setStudent] = React.useState(students);
 
@@ -45,10 +50,10 @@ const StudentState = (props) => {
     }
     
   return (
-    <StudentContext.Provider value={{student, allStudent}}>
+    <StudentContext.Provider value={{student, course,setCourse, allStudent}}>
       {props.children}
     </StudentContext.Provider>
   )
 }
 
-export default StudentState
+export default StudentState;

@@ -1,32 +1,33 @@
-import React from 'react';
-import { useContext } from 'react';
-import StudentContext from '../../context/StudentContext';
-import stdImg from "../../assets/profile.jpg"
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import StudentContext from '../../context/StudentContext';
+import stdImg from "../../assets/profile.jpg";
 
 const StudentTable = () => {
   const navigate = useNavigate();
-  const context = useContext(StudentContext);
-  const {student} = context;
-  console.log("Students from context:",student);
+  const { student } = useContext(StudentContext);
 
   const handleAddStudent = () => {
     navigate("/add-student");
   };
 
+  const handleEditStudent = () => {
+    navigate("/edit-student");
+  };
+
   return (
     <div className="container student-table-container mt-5 mb-5">
-      <h3 className="text-center mb-4">Students List</h3>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h3 className="section-title">Students List</h3>
+        <button className="btn btn-success" onClick={handleAddStudent}>
+          <i className="fas fa-plus me-2"></i> Add Student
+        </button>
+      </div>
 
       {student.length === 0 ? (
         <p className="text-center text-muted">No students available.</p>
       ) : (
-        <div className="table-responsive">
-          <div className="d-flex justify-content-end mb-3">
-            <button className="btn btn-success" onClick={handleAddStudent}>
-              <i className="fas fa-plus me-2"></i> Add Student
-            </button>
-          </div>
+        <div className="table-responsive shadow-sm rounded">
           <table className="table table-bordered table-hover align-middle text-center">
             <thead className="table-primary">
               <tr>
@@ -42,7 +43,7 @@ const StudentTable = () => {
             <tbody>
               {student.map((std, index) => (
                 <tr key={index}>
-                  <td>{index+1}</td>
+                  <td>{index + 1}</td>
                   <td>
                     <img
                       src={stdImg}
@@ -55,15 +56,12 @@ const StudentTable = () => {
                   <td>{std.age}</td>
                   <td>{std.course}</td>
                   <td>
-                    {/* Edit Icon */}
                     <i
                       className="fas fa-edit text-primary me-3"
                       title="Edit"
                       style={{ cursor: 'pointer' }}
-                      onClick={() => alert(`Edit ${std.name}`)}
+                      onClick={handleEditStudent}
                     ></i>
-
-                    {/* Delete Icon */}
                     <i
                       className="fas fa-trash-alt text-danger"
                       title="Delete"

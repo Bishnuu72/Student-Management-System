@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import userImg from '../../assets/profile.jpg';
 import StudentTable from './StudentTable';
+import CourseTable from './CourseTable';
 
 const AdminDashboard = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -145,14 +146,7 @@ const AdminDashboard = () => {
 
         {activeSection === 'courses' && (
           <div className="section-content">
-            <h3>Courses List</h3>
-            <ul>
-              <li>React for Beginners</li>
-              <li>Advanced Python</li>
-              <li>Machine Learning Basics</li>
-              <li>UI/UX Design</li>
-              <li>Java Development</li>
-            </ul>
+            <CourseTable />
           </div>
         )}
 

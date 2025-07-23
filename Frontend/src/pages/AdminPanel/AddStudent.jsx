@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Required for redirection
 
 const AddStudent = () => {
   const [students, setStudents] = useState([]);
@@ -10,6 +11,7 @@ const AddStudent = () => {
     course: '',
   });
   const [editIndex, setEditIndex] = useState(null);
+  const navigate = useNavigate(); // Initialize navigate function
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,95 +45,101 @@ const AddStudent = () => {
     setEditIndex(null);
   };
 
-  return (
-    <div className="container student-form-container mt-5 mb-5">
-      <h2 className="text-center mb-4">Student Enrollment Form</h2>
+  const handleCancel = () => {
+    navigate('/admin-panel'); // Replace with your student table route
+  };
 
-      <form className="shadow-lg p-5 rounded bg-white full-form" onSubmit={handleSubmit}>
-        <div className="row mb-4">
-          <div className="col-md-6">
-            <label className="form-label">Full Name</label>
+  return (
+    <div className="student-form-container">
+      <h2 className="form-title">Student Enrollment Form</h2>
+
+      <form className="student-form" onSubmit={handleSubmit}>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="custom-label">Full Name</label>
             <input
               type="text"
-              className="form-control"
+              className="custom-input"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              required
               placeholder="Enter student's full name"
+              required
             />
           </div>
-          <div className="col-md-3">
-            <label className="form-label">Age</label>
+          <div className="form-group">
+            <label className="custom-label">Age</label>
             <input
               type="number"
-              className="form-control"
+              className="custom-input"
               name="age"
               value={formData.age}
               onChange={handleChange}
-              required
               placeholder="Age"
+              required
             />
           </div>
-          <div className="col-md-3">
-            <label className="form-label">Course Enrolled</label>
+          <div className="form-group">
+            <label className="custom-label">Course</label>
             <input
               type="text"
-              className="form-control"
+              className="custom-input"
               name="course"
               value={formData.course}
               onChange={handleChange}
-              required
               placeholder="Course name"
+              required
             />
           </div>
         </div>
 
-        <hr className="mb-4" />
-        <h5 className="mb-3 text-secondary">Login Credentials</h5>
+        <h5 className="login-title">Login Credentials</h5>
 
-        <div className="row mb-4">
-          <div className="col-md-6">
-            <label className="form-label">Email Address</label>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="custom-label">Email</label>
             <input
               type="email"
-              className="form-control"
+              className="custom-input"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
               placeholder="example@domain.com"
+              required
             />
           </div>
-          <div className="col-md-6">
-            <label className="form-label">Password</label>
+          <div className="form-group">
+            <label className="custom-label">Password</label>
             <input
               type="password"
-              className="form-control"
+              className="custom-input"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              required
               placeholder="Create a password"
+              required
             />
           </div>
         </div>
 
-        <div className="text-end">
-          <button type="submit" className="btn btn-primary">
+        <div className="button-container d-flex justify-content-end gap-3 mt-3">
+          <button type="submit" className="btn-submit">
             {editIndex !== null ? 'Update Student' : 'Add Student'}
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={handleCancel}>
+            Cancel
           </button>
         </div>
       </form>
 
-      <div className="mt-5">
-        <h4 className="text-center mb-3">Enrolled Students</h4>
+      <div className="student-table">
+        <h4 className="text-center">Enrolled Students</h4>
         {students.length === 0 ? (
           <p className="text-center text-muted">No students enrolled yet.</p>
         ) : (
           <div className="table-responsive">
             <table className="table table-bordered table-hover text-center">
-              <thead className="table-primary">
+              <thead className="table-head">
                 <tr>
                   <th>Name</th>
                   <th>Age</th>
@@ -151,13 +159,13 @@ const AddStudent = () => {
                     <td>{student.password}</td>
                     <td>
                       <button
-                        className="btn btn-sm btn-warning me-2"
+                        className="btn-edit"
                         onClick={() => handleEdit(index)}
                       >
                         Edit
                       </button>
                       <button
-                        className="btn btn-sm btn-danger"
+                        className="btn-delete"
                         onClick={() => handleDelete(index)}
                       >
                         Delete
