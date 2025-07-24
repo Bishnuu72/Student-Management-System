@@ -1,19 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import StudentContext from '../../context/StudentContext';
 
-const EditStudent = ({ selectedStudent, onUpdate, onCancel }) => {
+const EditStudent = () => {
+  const { editStudent } = useContext(StudentContext);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const selectedStudent = location.state;
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: '',
     age: '',
     course: '',
   });
 
+  // Load student data into form on component mount
   useEffect(() => {
-    if (selectedStudent) {
-      setFormData(selectedStudent);
+    if (!selectedStudent) {
+      alert("No student selected. Redirecting...");
+      return navigate('/');
     }
-  }, [selectedStudent]);
+
+    setFormData({
+      name: selectedStudent.name || '',
+      email: selectedStudent.email || '',
+      age: selectedStudent.age || '',
+      course: selectedStudent.course || '',
+    });
+  }, [selectedStudent, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,9 +39,26 @@ const EditStudent = ({ selectedStudent, onUpdate, onCancel }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onUpdate(formData);
+
+    if (!selectedStudent?._id) {
+      alert("Invalid student ID");
+      return;
+    }
+
+    try {
+      await editStudent(selectedStudent._id, formData);
+      alert("Student updated successfully!");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update student.");
+    }
+  };
+
+  const handleCancel = () => {
+    navigate("/");
   };
 
   return (
@@ -46,6 +79,7 @@ const EditStudent = ({ selectedStudent, onUpdate, onCancel }) => {
               required
             />
           </div>
+
           <div className="form-group">
             <label className="custom-label">Age</label>
             <input
@@ -58,6 +92,7 @@ const EditStudent = ({ selectedStudent, onUpdate, onCancel }) => {
               required
             />
           </div>
+
           <div className="form-group">
             <label className="custom-label">Course</label>
             <input
@@ -87,23 +122,11 @@ const EditStudent = ({ selectedStudent, onUpdate, onCancel }) => {
               required
             />
           </div>
-          <div className="form-group">
-            <label className="custom-label">Password</label>
-            <input
-              type="password"
-              className="custom-input"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Create a password"
-              required
-            />
-          </div>
         </div>
 
         <div className="button-container">
           <button type="submit" className="btn-submit me-3">Update Student</button>
-          <button type="button" className="btn-delete" onClick={onCancel}>Cancel</button>
+          <button type="button" className="btn-delete" onClick={handleCancel}>Cancel</button>
         </div>
       </form>
     </div>

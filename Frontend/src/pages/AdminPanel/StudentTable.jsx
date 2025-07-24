@@ -1,18 +1,37 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StudentContext from '../../context/StudentContext';
-import stdImg from "../../assets/profile.jpg";
+import stdImg from '../../assets/profile.jpg';
 
 const StudentTable = () => {
   const navigate = useNavigate();
-  const { student } = useContext(StudentContext);
+  const { student, allStudent, deleteStudent } = useContext(StudentContext);
 
+  // Fetch all students on component mount
+  useEffect(() => {
+    allStudent();
+  }, []);
+
+  // Log student state whenever it updates
+  useEffect(() => {
+    console.log("Students data updated:", student);
+  }, [student]);
+
+  // Navigate to add student form
   const handleAddStudent = () => {
     navigate("/add-student");
   };
 
-  const handleEditStudent = () => {
-    navigate("/edit-student");
+  // Navigate to edit student page with student data
+  const handleEditStudent = (std) => {
+    navigate("/edit-student", { state: std });
+  };
+
+  // Delete student
+  const handleDeleteStudent = (id) => {
+    if (window.confirm("Are you sure you want to delete this student?")) {
+      deleteStudent(id);
+    }
   };
 
   return (
@@ -36,20 +55,16 @@ const StudentTable = () => {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Age</th>
-                <th>Course Enrolled</th>
+                <th>Course</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {student.map((std, index) => (
-                <tr key={index}>
+                <tr key={std._id}>
                   <td>{index + 1}</td>
                   <td>
-                    <img
-                      src={stdImg}
-                      alt={std.name}
-                      className="student-img"
-                    />
+                    <img src={stdImg} alt={std.name} className="student-img" />
                   </td>
                   <td>{std.name}</td>
                   <td>{std.email}</td>
@@ -60,13 +75,13 @@ const StudentTable = () => {
                       className="fas fa-edit text-primary me-3"
                       title="Edit"
                       style={{ cursor: 'pointer' }}
-                      onClick={handleEditStudent}
+                      onClick={() => handleEditStudent(std)}
                     ></i>
                     <i
                       className="fas fa-trash-alt text-danger"
                       title="Delete"
                       style={{ cursor: 'pointer' }}
-                      onClick={() => alert(`Delete ${std.name}`)}
+                      onClick={() => handleDeleteStudent(std._id)}
                     ></i>
                   </td>
                 </tr>

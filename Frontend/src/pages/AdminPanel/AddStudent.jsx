@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Required for redirection
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import StudentContext from '../../context/StudentContext';
 
 const AddStudent = () => {
-  const [students, setStudents] = useState([]);
+  const navigate = useNavigate();
+  const { addStudent } = useContext(StudentContext);
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -10,8 +13,6 @@ const AddStudent = () => {
     age: '',
     course: '',
   });
-  const [editIndex, setEditIndex] = useState(null);
-  const navigate = useNavigate(); // Initialize navigate function
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,32 +22,15 @@ const AddStudent = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editIndex !== null) {
-      const updated = [...students];
-      updated[editIndex] = formData;
-      setStudents(updated);
-      setEditIndex(null);
-    } else {
-      setStudents([...students, formData]);
-    }
+    await addStudent(formData);
     setFormData({ name: '', email: '', password: '', age: '', course: '' });
-  };
-
-  const handleEdit = (index) => {
-    setFormData(students[index]);
-    setEditIndex(index);
-  };
-
-  const handleDelete = (index) => {
-    const updated = students.filter((_, i) => i !== index);
-    setStudents(updated);
-    setEditIndex(null);
+    navigate('/admin-panel'); // Adjust route to match your student list view
   };
 
   const handleCancel = () => {
-    navigate('/admin-panel'); // Replace with your student table route
+    navigate('/admin-panel');
   };
 
   return (
@@ -124,60 +108,13 @@ const AddStudent = () => {
 
         <div className="button-container d-flex justify-content-end gap-3 mt-3">
           <button type="submit" className="btn-submit">
-            {editIndex !== null ? 'Update Student' : 'Add Student'}
+            Add Student
           </button>
           <button type="button" className="btn btn-secondary" onClick={handleCancel}>
             Cancel
           </button>
         </div>
       </form>
-
-      <div className="student-table">
-        <h4 className="text-center">Enrolled Students</h4>
-        {students.length === 0 ? (
-          <p className="text-center text-muted">No students enrolled yet.</p>
-        ) : (
-          <div className="table-responsive">
-            <table className="table table-bordered table-hover text-center">
-              <thead className="table-head">
-                <tr>
-                  <th>Name</th>
-                  <th>Age</th>
-                  <th>Course</th>
-                  <th>Email</th>
-                  <th>Password</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((student, index) => (
-                  <tr key={index}>
-                    <td>{student.name}</td>
-                    <td>{student.age}</td>
-                    <td>{student.course}</td>
-                    <td>{student.email}</td>
-                    <td>{student.password}</td>
-                    <td>
-                      <button
-                        className="btn-edit"
-                        onClick={() => handleEdit(index)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn-delete"
-                        onClick={() => handleDelete(index)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
