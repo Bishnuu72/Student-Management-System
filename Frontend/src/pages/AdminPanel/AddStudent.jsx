@@ -4,7 +4,7 @@ import StudentContext from '../../context/StudentContext';
 
 const AddStudent = () => {
   const navigate = useNavigate();
-  const { addStudent } = useContext(StudentContext);
+  const { addStudent, course } = useContext(StudentContext);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -88,15 +88,20 @@ const AddStudent = () => {
           </div>
           <div className="form-group">
             <label className="custom-label">Course</label>
-            <input
-              type="text"
+            <select
               className="custom-input"
               name="course"
               value={formData.course}
               onChange={handleChange}
-              placeholder="Course name"
               required
-            />
+            >
+              <option value="">-- Select a Course --</option>
+              {course.map((c) => (
+                <option key={c._id} value={c.name}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 

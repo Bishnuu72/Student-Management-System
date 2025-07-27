@@ -72,7 +72,7 @@ const StudentTable = () => {
                   <td>{std.name || "N/A"}</td>
                   <td>{std.email || "N/A"}</td>
                   <td>{std.age ?? "N/A"}</td>
-                  <td>{std.course || "N/A"}</td>
+                  <td>{std.course?.name || "N/A"}</td>
                   <td>
                     <i
                       className="fas fa-edit text-primary me-3"

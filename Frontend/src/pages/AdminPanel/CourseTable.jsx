@@ -1,43 +1,98 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import StudentContext from '../../context/StudentContext';
 
 const CourseTable = () => {
-  const { student, course, setCourse } = useContext(StudentContext);
+  const { student, course, setCourse, fetchCourses } = useContext(StudentContext);
+  const token = localStorage.getItem("token");
+  const [loading, setLoading] = useState(false);
 
-  // Get student counts for each course
+  // Get student counts for each course (by matching ObjectId)
   const getCourseCounts = () => {
     const counts = {};
     course.forEach((c) => {
-      counts[c] = 0;
+      counts[c._id] = 0;
     });
     student.forEach((s) => {
-      if (counts[s.course] !== undefined) {
-        counts[s.course]++;
+      const courseId = typeof s.course === "object" ? s.course._id : s.course;
+      // s.course is ObjectId or string, compare by _id string
+      if (courseId && counts[courseId] !== undefined) {
+        counts[courseId]++;
       }
     });
-    return Object.entries(counts);
+
+    return course.map((c) => [c, counts[c._id] || 0]);
   };
 
-  const handleAddCourse = () => {
-    const newCourse = prompt("Enter the name of the new course:")?.trim();
-    if (newCourse) {
-      if (!course.includes(newCourse)) {
-        setCourse([...course, newCourse]);
-        alert(`Course "${newCourse}" added successfully.`);
-      } else {
-        alert("Course already exists.");
+  // Add course with backend API call
+  const handleAddCourse = async () => {
+    const newCourseName = prompt("Enter the name of the new course:")?.trim();
+    if (!newCourseName) return;
+
+    // Check if course name already exists (case-insensitive)
+    const exists = course.some(c => c.name.toLowerCase() === newCourseName.toLowerCase());
+    if (exists) {
+      alert("Course already exists.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/courses/addcourse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "std-token": token,
+        },
+        body: JSON.stringify({ name: newCourseName }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || "Failed to add course");
       }
+
+      await fetchCourses(); // Refresh course list from backend
+      alert(`Course "${newCourseName}" added successfully.`);
+    } catch (error) {
+      alert("Error adding course: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDeleteCourse = (courseName) => {
-    const studentCount = student.filter((s) => s.course === courseName).length;
+  // Delete course with backend API call
+  const handleDeleteCourse = async (courseObj) => {
+    // courseObj = { _id, name }
+    // Check if students are enrolled in this course
+    const studentCount = student.filter((s) => s.course === courseObj._id).length;
     if (studentCount > 0) {
       alert("Cannot delete course. Students are enrolled in it.");
       return;
     }
-    if (window.confirm(`Are you sure you want to delete "${courseName}"?`)) {
-      setCourse(course.filter((c) => c !== courseName));
+
+    if (!window.confirm(`Are you sure you want to delete "${courseObj.name}"?`)) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:5000/api/courses/deletecourses/${courseObj._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "std-token": token,
+        },
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || "Failed to delete course");
+      }
+
+      await fetchCourses(); // Refresh courses after deletion
+      alert(`Course "${courseObj.name}" deleted successfully.`);
+    } catch (error) {
+      alert("Error deleting course: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,7 +102,11 @@ const CourseTable = () => {
     <div className="student-form-container mt-5">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 className="form-title mb-0">Course-wise Enrollment Summary</h2>
-        <button className="btn btn-primary" onClick={handleAddCourse}>
+        <button
+          className="btn btn-primary"
+          onClick={handleAddCourse}
+          disabled={loading}
+        >
           + Add Course
         </button>
       </div>
@@ -66,16 +125,16 @@ const CourseTable = () => {
               </tr>
             </thead>
             <tbody>
-              {courseList.map(([courseName, count], index) => (
-                <tr key={courseName}>
+              {courseList.map(([courseObj, count], index) => (
+                <tr key={courseObj._id}>
                   <td>{index + 1}</td>
-                  <td>{courseName}</td>
+                  <td>{courseObj.name}</td>
                   <td>{count}</td>
                   <td>
                     <i
                       className="fas fa-trash-alt text-danger"
                       style={{ cursor: 'pointer' }}
-                      onClick={() => handleDeleteCourse(courseName)}
+                      onClick={() => handleDeleteCourse(courseObj)}
                       title="Delete Course"
                     />
                   </td>

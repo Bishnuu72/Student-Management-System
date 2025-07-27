@@ -1,15 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const Course = require("../model/StudentSchema");
-const fetchUser = require("../middleware/FetchUser"); // Optional: use if you want to restrict access
+const Course = require("../model/CourseSchema"); // ✅ Correct import
+const fetchUser = require("../middleware/FetchUser"); // Optional
 
 // @route   POST /api/course/add
 // @desc    Add new course
-router.post("/add", fetchUser, async (req, res) => {
+router.post("/addcourse", fetchUser, async (req, res) => {
   try {
     const { name } = req.body;
 
-    // Check if course already exists
     let courseExist = await Course.findOne({ name });
     if (courseExist) {
       return res.status(400).json({ error: "Course already exists" });
@@ -27,7 +26,7 @@ router.post("/add", fetchUser, async (req, res) => {
 
 // @route   GET /api/course
 // @desc    Get all courses
-router.get("/", async (req, res) => {
+router.get("/allcourses", async (req, res) => {
   try {
     const courses = await Course.find();
     res.json(courses);
@@ -39,7 +38,7 @@ router.get("/", async (req, res) => {
 
 // @route   DELETE /api/course/:id
 // @desc    Delete a course by ID
-router.delete("/:id", fetchUser, async (req, res) => {
+router.delete("/deletecourses/:id", fetchUser, async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
 
