@@ -2,10 +2,9 @@ import React, { useContext } from 'react';
 import StudentContext from '../../context/StudentContext';
 
 const CourseTable = () => {
-  const context = useContext(StudentContext);
-  const { student, course } = context;
+  const { student, course, setCourse } = useContext(StudentContext);
 
-  // Count number of students per course
+  // Get student counts for each course
   const getCourseCounts = () => {
     const counts = {};
     course.forEach((c) => {
@@ -19,19 +18,30 @@ const CourseTable = () => {
     return Object.entries(counts);
   };
 
-  const courseList = getCourseCounts();
-
   const handleAddCourse = () => {
-    const newCourse = prompt("Enter the name of the new course:");
-    if (newCourse && newCourse.trim() !== "") {
-      if (!course.includes(newCourse.trim())) {
-        context.setCourse([...course, newCourse.trim()]);
-        alert(`Course "${newCourse.trim()}" added successfully.`);
+    const newCourse = prompt("Enter the name of the new course:")?.trim();
+    if (newCourse) {
+      if (!course.includes(newCourse)) {
+        setCourse([...course, newCourse]);
+        alert(`Course "${newCourse}" added successfully.`);
       } else {
         alert("Course already exists.");
       }
     }
   };
+
+  const handleDeleteCourse = (courseName) => {
+    const studentCount = student.filter((s) => s.course === courseName).length;
+    if (studentCount > 0) {
+      alert("Cannot delete course. Students are enrolled in it.");
+      return;
+    }
+    if (window.confirm(`Are you sure you want to delete "${courseName}"?`)) {
+      setCourse(course.filter((c) => c !== courseName));
+    }
+  };
+
+  const courseList = getCourseCounts();
 
   return (
     <div className="student-form-container mt-5">
@@ -52,6 +62,7 @@ const CourseTable = () => {
                 <th>S.N</th>
                 <th>Course Name</th>
                 <th>Total Students</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -60,6 +71,14 @@ const CourseTable = () => {
                   <td>{index + 1}</td>
                   <td>{courseName}</td>
                   <td>{count}</td>
+                  <td>
+                    <i
+                      className="fas fa-trash-alt text-danger"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleDeleteCourse(courseName)}
+                      title="Delete Course"
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>

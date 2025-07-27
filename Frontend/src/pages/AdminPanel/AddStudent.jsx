@@ -5,7 +5,7 @@ import StudentContext from '../../context/StudentContext';
 const AddStudent = () => {
   const navigate = useNavigate();
   const { addStudent } = useContext(StudentContext);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -14,23 +14,45 @@ const AddStudent = () => {
     course: '',
   });
 
+  const [loading, setLoading] = useState(false);
+
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === 'age' ? value.replace(/\D/, '') : value, // restrict age to digits
     }));
   };
 
+  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await addStudent(formData);
-    setFormData({ name: '', email: '', password: '', age: '', course: '' });
-    navigate('/admin-panel'); // Adjust route to match your student list view
+
+    const studentPayload = {
+      ...formData,
+      age: parseInt(formData.age), // Ensure age is sent as a number
+    };
+
+    try {
+      setLoading(true);
+      await addStudent(studentPayload);
+      setFormData({ name: '', email: '', password: '', age: '', course: '' });
+      navigate('/admin-panel');
+    } catch (error) {
+      console.error("Error adding student:", error);
+      alert("Failed to add student. Try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // Cancel and go back
   const handleCancel = () => {
-    navigate('/admin-panel');
+    if (window.confirm("Are you sure you want to cancel?")) {
+      navigate('/admin-panel');
+    }
   };
 
   return (
@@ -61,6 +83,7 @@ const AddStudent = () => {
               onChange={handleChange}
               placeholder="Age"
               required
+              min="1"
             />
           </div>
           <div className="form-group">
@@ -102,15 +125,25 @@ const AddStudent = () => {
               onChange={handleChange}
               placeholder="Create a password"
               required
+              minLength={6}
             />
           </div>
         </div>
 
         <div className="button-container d-flex justify-content-end gap-3 mt-3">
-          <button type="submit" className="btn-submit">
-            Add Student
+          <button
+            type="submit"
+            className="btn-submit"
+            disabled={loading}
+          >
+            {loading ? 'Adding...' : 'Add Student'}
           </button>
-          <button type="button" className="btn btn-secondary" onClick={handleCancel}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleCancel}
+            disabled={loading}
+          >
             Cancel
           </button>
         </div>

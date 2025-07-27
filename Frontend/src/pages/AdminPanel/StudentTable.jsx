@@ -7,27 +7,24 @@ const StudentTable = () => {
   const navigate = useNavigate();
   const { student, allStudent, deleteStudent } = useContext(StudentContext);
 
-  // Fetch all students on component mount
+  // Fetch students on mount
   useEffect(() => {
     allStudent();
   }, []);
 
-  // Log student state whenever it updates
+  // Debug log
   useEffect(() => {
     console.log("Students data updated:", student);
   }, [student]);
 
-  // Navigate to add student form
   const handleAddStudent = () => {
     navigate("/add-student");
   };
 
-  // Navigate to edit student page with student data
   const handleEditStudent = (std) => {
     navigate("/edit-student", { state: std });
   };
 
-  // Delete student
   const handleDeleteStudent = (id) => {
     if (window.confirm("Are you sure you want to delete this student?")) {
       deleteStudent(id);
@@ -64,12 +61,18 @@ const StudentTable = () => {
                 <tr key={std._id}>
                   <td>{index + 1}</td>
                   <td>
-                    <img src={stdImg} alt={std.name} className="student-img" />
+                    <img
+                      src={stdImg}
+                      alt={std.name || "Student"}
+                      className="student-img rounded-circle"
+                      width="40"
+                      height="40"
+                    />
                   </td>
-                  <td>{std.name}</td>
-                  <td>{std.email}</td>
-                  <td>{std.age}</td>
-                  <td>{std.course}</td>
+                  <td>{std.name || "N/A"}</td>
+                  <td>{std.email || "N/A"}</td>
+                  <td>{std.age ?? "N/A"}</td>
+                  <td>{std.course || "N/A"}</td>
                   <td>
                     <i
                       className="fas fa-edit text-primary me-3"

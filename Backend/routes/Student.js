@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const Student = require("../models/Student");
+const Student = require("../model/StudentSchema");
 const fetchUser = require("../middleware/FetchUser");
 
 // Route 1: Get all students - Protected
-router.get("/fetch", fetchUser, async (req, res) => {
+router.get("/allstudents", fetchUser, async (req, res) => {
   try {
     const students = await Student.find({ user: req.user.id });
     res.json(students);
@@ -15,16 +15,16 @@ router.get("/fetch", fetchUser, async (req, res) => {
 });
 
 // Route 2: Add a new student - Protected
-router.post("/add", fetchUser, async (req, res) => {
+router.post("/addstudent", fetchUser, async (req, res) => {
   try {
-    const { name, email, phone, course, address } = req.body;
+    const { name, age, email, course, password } = req.body;
 
     const newStudent = new Student({
       name,
       email,
-      phone,
+      age,
       course,
-      address,
+      password,
       user: req.user.id,
     });
 
@@ -38,14 +38,14 @@ router.post("/add", fetchUser, async (req, res) => {
 
 // Route 3: Update a student by ID - Protected
 router.put("/update/:id", fetchUser, async (req, res) => {
-  const { name, email, phone, course, address } = req.body;
+  const { name, email, age, course, password } = req.body;
 
   const updatedData = {};
   if (name) updatedData.name = name;
   if (email) updatedData.email = email;
-  if (phone) updatedData.phone = phone;
+  if (age) updatedData.age = age; // fixed
   if (course) updatedData.course = course;
-  if (address) updatedData.address = address;
+  if (password) updatedData.password = password;
 
   try {
     let student = await Student.findById(req.params.id);

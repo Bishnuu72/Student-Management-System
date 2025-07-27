@@ -58,6 +58,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
 // 👉 Student routes
 app.use("/students", require("./routes/Student"));
+app.use("/api/courses", require("./routes/Course"));
 
 // 🚀 Start server
 app.listen(port, () => {

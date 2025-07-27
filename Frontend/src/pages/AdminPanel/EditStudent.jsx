@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import StudentContext from '../../context/StudentContext';
 
 const EditStudent = () => {
-  const { editStudent } = useContext(StudentContext);
+  const { editStudent, getStudents } = useContext(StudentContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -16,11 +16,14 @@ const EditStudent = () => {
     course: '',
   });
 
-  // Load student data into form on component mount
+  const [loading, setLoading] = useState(false);
+
+  // Load existing student data
   useEffect(() => {
     if (!selectedStudent) {
       alert("No student selected. Redirecting...");
-      return navigate('/');
+      navigate('/admin-panel');
+      return;
     }
 
     setFormData({
@@ -35,7 +38,7 @@ const EditStudent = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === 'age' ? value.replace(/\D/, '') : value,
     }));
   };
 
@@ -48,17 +51,29 @@ const EditStudent = () => {
     }
 
     try {
-      await editStudent(selectedStudent._id, formData);
+      setLoading(true);
+
+      const updatedData = {
+        ...formData,
+        age: parseInt(formData.age), // ensure number
+      };
+
+      await editStudent(selectedStudent._id, updatedData);
+      await getStudents(); // Refresh data in StudentTable
       alert("Student updated successfully!");
-      navigate("/");
+      navigate('/admin-panel');
     } catch (error) {
       console.error(error);
       alert("Failed to update student.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    navigate("/");
+    if (window.confirm("Discard changes?")) {
+      navigate('/admin-panel');
+    }
   };
 
   return (
@@ -90,6 +105,7 @@ const EditStudent = () => {
               onChange={handleChange}
               placeholder="Age"
               required
+              min="1"
             />
           </div>
 
@@ -124,9 +140,22 @@ const EditStudent = () => {
           </div>
         </div>
 
-        <div className="button-container">
-          <button type="submit" className="btn-submit me-3">Update Student</button>
-          <button type="button" className="btn-delete" onClick={handleCancel}>Cancel</button>
+        <div className="button-container mt-3 d-flex justify-content-end gap-3">
+          <button
+            type="submit"
+            className="btn-submit"
+            disabled={loading}
+          >
+            {loading ? 'Updating...' : 'Update Student'}
+          </button>
+          <button
+            type="button"
+            className="btn-delete"
+            onClick={handleCancel}
+            disabled={loading}
+          >
+            Cancel
+          </button>
         </div>
       </form>
     </div>

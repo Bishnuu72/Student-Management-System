@@ -8,6 +8,7 @@ const StudentState = (props) => {
 
   const token = localStorage.getItem("token");
 
+  // Fetch all students
   const allStudent = async () => {
     if (!token) {
       console.error("No auth token found. Please login.");
@@ -60,8 +61,7 @@ const StudentState = (props) => {
       const data = await response.json();
       console.log("Student added:", data);
 
-      // Refresh the list after successful addition
-      allStudent();
+      allStudent(); // refresh
     } catch (error) {
       console.error("Error adding student:", error.message);
     }
@@ -74,7 +74,7 @@ const StudentState = (props) => {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:5000/students/updatestudent/${id}`, {
+      const response = await fetch(`http://localhost:5000/students/update/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -91,7 +91,7 @@ const StudentState = (props) => {
       const data = await response.json();
       console.log("Edited student:", data);
 
-      allStudent();
+      allStudent(); // refresh
     } catch (error) {
       console.error("Error updating student:", error.message);
     }
@@ -104,7 +104,7 @@ const StudentState = (props) => {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:5000/students/deletestudent/${id}`, {
+      const response = await fetch(`http://localhost:5000/students/delete/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -120,7 +120,7 @@ const StudentState = (props) => {
       const data = await response.json();
       console.log("Deleted:", data);
 
-      allStudent();
+      allStudent(); // refresh
     } catch (error) {
       console.error("Error deleting student:", error.message);
     }
