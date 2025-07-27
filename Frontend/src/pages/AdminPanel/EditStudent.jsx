@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import StudentContext from '../../context/StudentContext';
 
 const EditStudent = () => {
-  const { editStudent, getStudents } = useContext(StudentContext);
+  const { editStudent, allStudent, course } = useContext(StudentContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -14,11 +14,11 @@ const EditStudent = () => {
     email: '',
     age: '',
     course: '',
+    password: '',
   });
 
   const [loading, setLoading] = useState(false);
 
-  // Load existing student data
   useEffect(() => {
     if (!selectedStudent) {
       alert("No student selected. Redirecting...");
@@ -29,8 +29,9 @@ const EditStudent = () => {
     setFormData({
       name: selectedStudent.name || '',
       email: selectedStudent.email || '',
-      age: selectedStudent.age || '',
-      course: selectedStudent.course || '',
+      age: selectedStudent.age?.toString() || '',
+      course: selectedStudent.course?.name || '',
+      password: '', // 👈 Leave empty initially
     });
   }, [selectedStudent, navigate]);
 
@@ -55,11 +56,17 @@ const EditStudent = () => {
 
       const updatedData = {
         ...formData,
-        age: parseInt(formData.age), // ensure number
+        age: parseInt(formData.age),
+        course: formData.course,
       };
 
+      // ⚠️ Only include password if it's not empty (optional update)
+      if (!formData.password.trim()) {
+        delete updatedData.password;
+      }
+
       await editStudent(selectedStudent._id, updatedData);
-      await getStudents(); // Refresh data in StudentTable
+      await allStudent();
       alert("Student updated successfully!");
       navigate('/admin-panel');
     } catch (error) {
@@ -111,15 +118,20 @@ const EditStudent = () => {
 
           <div className="form-group">
             <label className="custom-label">Course</label>
-            <input
-              type="text"
-              className="custom-input"
+            <select
               name="course"
               value={formData.course}
               onChange={handleChange}
-              placeholder="Course name"
+              className="custom-input"
               required
-            />
+            >
+              <option value="">-- Select Course --</option>
+              {course.map((c) => (
+                <option key={c._id} value={c.name}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -136,6 +148,18 @@ const EditStudent = () => {
               onChange={handleChange}
               placeholder="example@domain.com"
               required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="custom-label">Password</label>
+            <input
+              type="password"
+              className="custom-input"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter new password"
             />
           </div>
         </div>

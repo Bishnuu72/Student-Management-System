@@ -3,16 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import StudentContext from '../../context/StudentContext';
 import stdImg from '../../assets/profile.jpg';
 
-const StudentTable = () => {
+const StudentTable = ({ searchQuery }) => {
   const navigate = useNavigate();
   const { student, allStudent, deleteStudent } = useContext(StudentContext);
 
-  // Fetch students on mount
   useEffect(() => {
     allStudent();
   }, []);
 
-  // Debug log
   useEffect(() => {
     console.log("Students data updated:", student);
   }, [student]);
@@ -31,6 +29,17 @@ const StudentTable = () => {
     }
   };
 
+  // Filter by name or course only (no email)
+  const filteredStudents = student.filter((std) => {
+    const query = searchQuery?.toLowerCase() || "";
+    const name = std.name?.toLowerCase() || "";
+    const course = std.course?.name?.toLowerCase() || "";
+    return (
+      name.includes(query) ||
+      course.includes(query)
+    );
+  });
+
   return (
     <div className="container student-table-container mt-5 mb-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -42,6 +51,8 @@ const StudentTable = () => {
 
       {student.length === 0 ? (
         <p className="text-center text-muted">No students available.</p>
+      ) : filteredStudents.length === 0 ? (
+        <p className="text-center text-muted">No matching students found.</p>
       ) : (
         <div className="table-responsive shadow-sm rounded">
           <table className="table table-bordered table-hover align-middle text-center">
@@ -57,7 +68,7 @@ const StudentTable = () => {
               </tr>
             </thead>
             <tbody>
-              {student.map((std, index) => (
+              {filteredStudents.map((std, index) => (
                 <tr key={std._id}>
                   <td>{index + 1}</td>
                   <td>

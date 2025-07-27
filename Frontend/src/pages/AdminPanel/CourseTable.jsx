@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import StudentContext from '../../context/StudentContext';
 
-const CourseTable = () => {
+const CourseTable = ({ searchQuery }) => {
   const { student, course, setCourse, fetchCourses } = useContext(StudentContext);
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
@@ -14,7 +14,6 @@ const CourseTable = () => {
     });
     student.forEach((s) => {
       const courseId = typeof s.course === "object" ? s.course._id : s.course;
-      // s.course is ObjectId or string, compare by _id string
       if (courseId && counts[courseId] !== undefined) {
         counts[courseId]++;
       }
@@ -28,7 +27,6 @@ const CourseTable = () => {
     const newCourseName = prompt("Enter the name of the new course:")?.trim();
     if (!newCourseName) return;
 
-    // Check if course name already exists (case-insensitive)
     const exists = course.some(c => c.name.toLowerCase() === newCourseName.toLowerCase());
     if (exists) {
       alert("Course already exists.");
@@ -51,7 +49,7 @@ const CourseTable = () => {
         throw new Error(errData.message || "Failed to add course");
       }
 
-      await fetchCourses(); // Refresh course list from backend
+      await fetchCourses();
       alert(`Course "${newCourseName}" added successfully.`);
     } catch (error) {
       alert("Error adding course: " + error.message);
@@ -62,8 +60,6 @@ const CourseTable = () => {
 
   // Delete course with backend API call
   const handleDeleteCourse = async (courseObj) => {
-    // courseObj = { _id, name }
-    // Check if students are enrolled in this course
     const studentCount = student.filter((s) => s.course === courseObj._id).length;
     if (studentCount > 0) {
       alert("Cannot delete course. Students are enrolled in it.");
@@ -87,7 +83,7 @@ const CourseTable = () => {
         throw new Error(errData.message || "Failed to delete course");
       }
 
-      await fetchCourses(); // Refresh courses after deletion
+      await fetchCourses();
       alert(`Course "${courseObj.name}" deleted successfully.`);
     } catch (error) {
       alert("Error deleting course: " + error.message);
@@ -97,6 +93,12 @@ const CourseTable = () => {
   };
 
   const courseList = getCourseCounts();
+
+  // Filtered course list using searchQuery
+  const filteredCourseList = courseList.filter(([courseObj]) => {
+    const query = searchQuery?.toLowerCase() || "";
+    return courseObj.name.toLowerCase().includes(query);
+  });
 
   return (
     <div className="student-form-container mt-5">
@@ -113,6 +115,8 @@ const CourseTable = () => {
 
       {courseList.length === 0 ? (
         <p className="text-center text-muted">No courses found.</p>
+      ) : filteredCourseList.length === 0 ? (
+        <p className="text-center text-muted">No matching courses found.</p>
       ) : (
         <div className="table-responsive">
           <table className="table table-bordered table-hover text-center">
@@ -125,7 +129,7 @@ const CourseTable = () => {
               </tr>
             </thead>
             <tbody>
-              {courseList.map(([courseObj, count], index) => (
+              {filteredCourseList.map(([courseObj, count], index) => (
                 <tr key={courseObj._id}>
                   <td>{index + 1}</td>
                   <td>{courseObj.name}</td>
