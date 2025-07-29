@@ -9,8 +9,22 @@ const cors = require("cors");
 // Load environment variables early
 dotenv.config();
 
-// Connect to MongoDB
-dbConnect();
+// Connect to MongoDB with fallback URI
+const connectDB = async () => {
+  try {
+    const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/student_management";
+    await require("mongoose").connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("✅ MongoDB connected successfully.");
+  } catch (error) {
+    console.error("❌ MongoDB connection failed:", error.message);
+    process.exit(1);
+  }
+};
+
+connectDB();
 
 const app = express();
 
@@ -57,8 +71,11 @@ app.post("/upload", upload.single("file"), (req, res) => {
 });
 
 // 👉 Student routes
+app.use("/api/auth", require("./routes/auth"));
 app.use("/students", require("./routes/Student"));
 app.use("/api/courses", require("./routes/Course"));
+app.use("/students/auth", require("./routes/StudentAuth"));
+app.use("/api/profile", require("./routes/Profile"));
 
 // 🚀 Start server
 app.listen(port, () => {

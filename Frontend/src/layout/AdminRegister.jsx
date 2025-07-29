@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import teacherImg from "../assets/teacher.jpg";
 
-const AdminLogin = () => {
+const AdminRegister = () => {
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState({
+    name: "",
     email: "",
-    password: ""
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -18,26 +19,26 @@ const AdminLogin = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/admin-login", {
+      const response = await fetch("http://localhost:5000/api/auth/admin-register", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials),
       });
 
-      const data = await res.json();
+      const data = await response.json();
 
-      if (res.ok) {
+      if (response.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.role);
-        navigate("/admin-panel"); // 👈 Redirect to admin panel
+        navigate("/"); // Redirect to home
       } else {
-        alert(data.error || "Login failed. Check your credentials.");
+        alert(data.error || "Registration failed. Try again.");
       }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong. Try again later.");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
     }
   };
 
@@ -49,25 +50,40 @@ const AdminLogin = () => {
           <div className="col-md-6 login-image-container d-none d-md-block">
             <img
               src={teacherImg}
-              alt="Login Visual"
+              alt="Register Visual"
               className="img-fluid h-100 w-100 object-fit-cover"
             />
           </div>
 
           {/* Right form */}
           <div className="col-md-6 p-5 d-flex flex-column justify-content-center">
-            <h3 className="mb-4 text-center fw-bold">Admin Login</h3>
+            <h3 className="mb-4 text-center fw-bold">Admin Register</h3>
 
             <form onSubmit={handleSubmit}>
+              <div className="mb-3 input-group">
+                <span className="input-group-text bg-light">
+                  <i className="fa-solid fa-user"></i>
+                </span>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Name"
+                  name="name"
+                  value={credentials.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
               <div className="mb-3 input-group">
                 <span className="input-group-text bg-light">
                   <i className="fa-solid fa-envelope"></i>
                 </span>
                 <input
                   type="email"
-                  name="email"
                   className="form-control"
                   placeholder="Email"
+                  name="email"
                   value={credentials.email}
                   onChange={handleChange}
                   required
@@ -80,9 +96,9 @@ const AdminLogin = () => {
                 </span>
                 <input
                   type="password"
-                  name="password"
                   className="form-control"
                   placeholder="Password"
+                  name="password"
                   value={credentials.password}
                   onChange={handleChange}
                   required
@@ -90,16 +106,16 @@ const AdminLogin = () => {
               </div>
 
               <div className="d-grid mt-3">
-                <button type="submit" className="btn btn-success fw-bold rounded-pill py-2">
-                  LOGIN
+                <button type="submit" className="btn btn-primary fw-bold rounded-pill py-2">
+                  REGISTER
                 </button>
               </div>
             </form>
 
-            {/* Back to Register */}
+            {/* Link to login */}
             <div className="text-center mt-4">
-              <Link to="/admin-register" className="back-home-link">
-                ← Register Admin
+              <Link to="/admin-login" className="back-home-link">
+                ← Login as Admin
               </Link>
             </div>
           </div>
@@ -109,4 +125,4 @@ const AdminLogin = () => {
   );
 };
 
-export default AdminLogin;
+export default AdminRegister;

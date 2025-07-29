@@ -39,7 +39,7 @@ const CourseTable = ({ searchQuery }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "std-token": token,
+          "auth-token": token,
         },
         body: JSON.stringify({ name: newCourseName }),
       });
@@ -74,7 +74,7 @@ const CourseTable = ({ searchQuery }) => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "std-token": token,
+          "auth-token": token,
         },
       });
 

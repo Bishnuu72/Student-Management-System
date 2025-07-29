@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import StudentContext from './StudentContext';
 
 const StudentState = (props) => {
-  const [courses, setCourses] = useState([]);         // ← Now dynamic
+  const [courses, setCourses] = useState([]);         
   const [students, setStudents] = useState([]);
   const token = localStorage.getItem("token");
 
@@ -18,7 +18,7 @@ const StudentState = (props) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "std-token": token,
+          "auth-token": token,
         },
       });
 
@@ -35,7 +35,7 @@ const StudentState = (props) => {
     }
   };
 
-  // ✅ Fetch all courses
+  // Fetch all courses
   const fetchCourses = async () => {
     if (!token) {
       console.error("No auth token found. Please login.");
@@ -47,7 +47,7 @@ const StudentState = (props) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "std-token": token,
+          "auth-token": token,
         },
       });
 
@@ -64,7 +64,7 @@ const StudentState = (props) => {
     }
   };
 
-  // ✅ Add new student
+  // ✅ Add new student (updated)
   const addStudent = async (studentData) => {
     if (!token) {
       console.error("No token found. Please login.");
@@ -72,7 +72,6 @@ const StudentState = (props) => {
     }
 
     try {
-      // 🔁 Convert course name to ObjectId
       const selectedCourse = courses.find(c => c.name === studentData.course);
       if (!selectedCourse) {
         throw new Error("Invalid course selected.");
@@ -80,13 +79,13 @@ const StudentState = (props) => {
 
       const newStudentData = {
         ...studentData,
-        course: selectedCourse._id, // 👈 send ObjectId to backend
+        course: selectedCourse._id,
       };
       const response = await fetch("http://localhost:5000/students/addstudent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "std-token": token,
+          "auth-token": token,
         },
         body: JSON.stringify(newStudentData),
       });
@@ -99,7 +98,8 @@ const StudentState = (props) => {
       const data = await response.json();
       console.log("Student added:", data);
 
-      allStudent(); // refresh
+      // ✅ Append directly instead of re-fetching
+      setStudents(prev => [...prev, data]);
     } catch (error) {
       console.error("Error adding student:", error.message);
     }
@@ -112,7 +112,6 @@ const StudentState = (props) => {
       return;
     }
     try {
-      // Convert course name to ObjectId before sending
       const selectedCourse = courses.find(c => c.name === updateData.course);
       const updatedData = {
         ...updateData,
@@ -123,7 +122,7 @@ const StudentState = (props) => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "std-token": token,
+          "auth-token": token,
         },
         body: JSON.stringify(updatedData),
       });
@@ -153,7 +152,7 @@ const StudentState = (props) => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "std-token": token,
+          "auth-token": token,
         },
       });
 

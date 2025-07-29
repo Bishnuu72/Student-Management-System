@@ -8,8 +8,10 @@ const StudentTable = ({ searchQuery }) => {
   const { student, allStudent, deleteStudent } = useContext(StudentContext);
 
   useEffect(() => {
-    allStudent();
-  }, []);
+    if (student.length === 0) {
+      allStudent();
+    }
+  }, []); // Run once on mount
 
   useEffect(() => {
     console.log("Students data updated:", student);
@@ -29,15 +31,11 @@ const StudentTable = ({ searchQuery }) => {
     }
   };
 
-  // Filter by name or course only (no email)
   const filteredStudents = student.filter((std) => {
     const query = searchQuery?.toLowerCase() || "";
     const name = std.name?.toLowerCase() || "";
     const course = std.course?.name?.toLowerCase() || "";
-    return (
-      name.includes(query) ||
-      course.includes(query)
-    );
+    return name.includes(query) || course.includes(query);
   });
 
   return (

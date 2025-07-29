@@ -11,6 +11,7 @@ import AdminDashboard from "./pages/AdminPanel/AdminDashboard";
 import StudentState from "./context/StudentState";
 import AddStudent from "./pages/AdminPanel/AddStudent";
 import EditStudent from "./pages/AdminPanel/EditStudent";
+import AdminRegister from "./layout/AdminRegister";
 
 function LayoutWrapper({ darkMode, toggleTheme }) {
   const location = useLocation();
@@ -27,6 +28,7 @@ function LayoutWrapper({ darkMode, toggleTheme }) {
         <Route path="/" element={<Home />} />
         <Route path="/student-login" element={<StudentLogin />} />
         <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin-register" element={<AdminRegister />} />
         <Route path="/profile" element={<Profile darkMode={darkMode} toggleTheme={toggleTheme} />} />
         <Route path="/admin-panel" element={<AdminDashboard darkMode={darkMode} toggleTheme={toggleTheme} />} />
         <Route path="/add-student" element={<AddStudent />} />

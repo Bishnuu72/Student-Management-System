@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const Course = require("../model/CourseSchema"); // ✅ Correct import
-const fetchUser = require("../middleware/FetchUser"); // Optional
+const Course = require("../model/CourseSchema");
 
-// @route   POST /api/course/add
-// @desc    Add new course
-router.post("/addcourse", fetchUser, async (req, res) => {
+// Correct import: destructure both middleware functions
+const { fetchUser, isAdmin } = require("../middleware/FetchUser");
+
+// @route   POST /api/course/addcourse
+// @desc    Add new course - Admin only
+router.post("/addcourse", fetchUser, isAdmin, async (req, res) => {
   try {
     const { name } = req.body;
 
@@ -24,8 +26,8 @@ router.post("/addcourse", fetchUser, async (req, res) => {
   }
 });
 
-// @route   GET /api/course
-// @desc    Get all courses
+// @route   GET /api/course/allcourses
+// @desc    Get all courses - Public (no auth required)
 router.get("/allcourses", async (req, res) => {
   try {
     const courses = await Course.find();
@@ -36,9 +38,9 @@ router.get("/allcourses", async (req, res) => {
   }
 });
 
-// @route   DELETE /api/course/:id
-// @desc    Delete a course by ID
-router.delete("/deletecourses/:id", fetchUser, async (req, res) => {
+// @route   DELETE /api/course/deletecourses/:id
+// @desc    Delete a course by ID - Admin only
+router.delete("/deletecourses/:id", fetchUser, isAdmin, async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
 
@@ -48,6 +50,24 @@ router.delete("/deletecourses/:id", fetchUser, async (req, res) => {
 
     await Course.findByIdAndDelete(req.params.id);
     res.json({ msg: "Course deleted successfully" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route   PUT /api/course/updatecourse/:id
+// @desc    Update a course by ID - Admin only
+router.put("/updatecourse/:id", fetchUser, isAdmin, async (req, res) => {
+  const { name } = req.body;
+  try {
+    let course = await Course.findById(req.params.id);
+    if (!course) return res.status(404).json({ msg: "Course not found" });
+
+    course.name = name || course.name;
+
+    await course.save();
+    res.json(course);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
