@@ -15,6 +15,7 @@ const AddStudent = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Handle input change
   const handleChange = (e) => {
@@ -26,23 +27,44 @@ const AddStudent = () => {
     }));
   };
 
+  function validatePassword(password) {
+    return (
+      password.length >= 8 &&
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[^A-Za-z0-9]/.test(password)
+    );
+  }
+  function validateName(name) {
+    return name.trim().length >= 3;
+  }
+
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!validateName(formData.name)) {
+      window.Swal.fire({icon:'error',title:'Invalid Name',text:'Name must be at least 3 characters.',confirmButtonColor:'#3085d6'});
+      return;
+    }
+    if (!validatePassword(formData.password)) {
+      window.Swal.fire({icon:'error',title:'Weak Password',text:'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.',confirmButtonColor:'#3085d6'});
+      return;
+    }
     const studentPayload = {
       ...formData,
-      age: parseInt(formData.age), // Ensure age is sent as a number
+      age: parseInt(formData.age),
     };
-
     try {
       setLoading(true);
       await addStudent(studentPayload);
-      setFormData({ name: '', email: '', password: '', age: '', course: '' });
-      navigate('/admin-panel');
+      window.Swal.fire({icon:'success',title:'Student Added',text:'Student has been added successfully.',timer:1500,showConfirmButton:false});
+      setTimeout(()=>{
+        setFormData({ name: '', email: '', password: '', age: '', course: '' });
+        navigate('/admin-panel');
+      }, 1500);
     } catch (error) {
-      console.error("Error adding student:", error);
-      alert("Failed to add student. Try again.");
+      window.Swal.fire({icon:'error',title:'Error',text:'Failed to add student. Try again.',confirmButtonColor:'#3085d6'});
     } finally {
       setLoading(false);
     }
@@ -62,7 +84,7 @@ const AddStudent = () => {
       <form className="student-form" onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-group">
-            <label className="custom-label">Full Name</label>
+            <label className="custom-label">Full Name <span style={{ color: 'red' }}>*</span></label>
             <input
               type="text"
               className="custom-input"
@@ -71,10 +93,11 @@ const AddStudent = () => {
               onChange={handleChange}
               placeholder="Enter student's full name"
               required
+              minLength={3}
             />
           </div>
           <div className="form-group">
-            <label className="custom-label">Age</label>
+            <label className="custom-label">Age <span style={{ color: 'red' }}>*</span></label>
             <input
               type="number"
               className="custom-input"
@@ -87,7 +110,7 @@ const AddStudent = () => {
             />
           </div>
           <div className="form-group">
-            <label className="custom-label">Course</label>
+            <label className="custom-label">Course <span style={{ color: 'red' }}>*</span></label>
             <select
               className="custom-input"
               name="course"
@@ -109,7 +132,7 @@ const AddStudent = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label className="custom-label">Email</label>
+            <label className="custom-label">Email <span style={{ color: 'red' }}>*</span></label>
             <input
               type="email"
               className="custom-input"
@@ -121,7 +144,7 @@ const AddStudent = () => {
             />
           </div>
           <div className="form-group">
-            <label className="custom-label">Password</label>
+            <label className="custom-label">Password <span style={{ color: 'red' }}>*</span></label>
             <input
               type="password"
               className="custom-input"
@@ -130,11 +153,11 @@ const AddStudent = () => {
               onChange={handleChange}
               placeholder="Create a password"
               required
-              minLength={6}
+              minLength={8}
+              autoComplete="new-password"
             />
           </div>
         </div>
-
         <div className="button-container d-flex justify-content-end gap-3 mt-3">
           <button
             type="submit"

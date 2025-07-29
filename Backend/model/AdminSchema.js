@@ -10,7 +10,15 @@ const adminSchema = new Schema({
     enum: ['admin', 'student'],
     default: 'admin',  // Default role changed to admin here
   },
-  date: { type: Date, default: Date.now }
+  date: { type: Date, default: Date.now },
+  socialLinks: {
+    type: Object,
+    default: {},
+  },
+  avatar: {
+    type: String,
+    default: null,
+  },
 });
 
 const User = mongoose.model("Admin", adminSchema);

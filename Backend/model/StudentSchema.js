@@ -24,6 +24,14 @@ const StudentSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  socialLinks: {
+    type: Object,
+    default: {},
+  },
+  avatar: {
+    type: String,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model("Student", StudentSchema);

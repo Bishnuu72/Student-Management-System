@@ -18,10 +18,11 @@ const EditStudent = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!selectedStudent) {
-      alert("No student selected. Redirecting...");
+      window.Swal.fire({icon:'warning',title:'No Student Selected',text:'No student selected. Redirecting...',confirmButtonColor:'#3085d6'});
       navigate('/admin-panel');
       return;
     }
@@ -43,35 +44,49 @@ const EditStudent = () => {
     }));
   };
 
+  function validatePassword(password) {
+    return (
+      password.length >= 8 &&
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[^A-Za-z0-9]/.test(password)
+    );
+  }
+  function validateName(name) {
+    return name.trim().length >= 3;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!selectedStudent?._id) {
-      alert("Invalid student ID");
+    if (!validateName(formData.name)) {
+      window.Swal.fire({icon:'error',title:'Invalid Name',text:'Name must be at least 3 characters.',confirmButtonColor:'#3085d6'});
       return;
     }
-
+    if (formData.password && !validatePassword(formData.password)) {
+      window.Swal.fire({icon:'error',title:'Weak Password',text:'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.',confirmButtonColor:'#3085d6'});
+      return;
+    }
+    if (!selectedStudent?._id) {
+      window.Swal.fire({icon:'error',title:'Error',text:'Invalid student ID',confirmButtonColor:'#3085d6'});
+      return;
+    }
     try {
       setLoading(true);
-
       const updatedData = {
         ...formData,
         age: parseInt(formData.age),
         course: formData.course,
       };
-
-      // ⚠️ Only include password if it's not empty (optional update)
       if (!formData.password.trim()) {
         delete updatedData.password;
       }
-
       await editStudent(selectedStudent._id, updatedData);
       await allStudent();
-      alert("Student updated successfully!");
-      navigate('/admin-panel');
+      window.Swal.fire({icon:'success',title:'Student Updated',text:'Student updated successfully!',timer:1500,showConfirmButton:false});
+      setTimeout(()=>navigate('/admin-panel'), 1500);
     } catch (error) {
-      console.error(error);
-      alert("Failed to update student.");
+      window.Swal.fire({icon:'error',title:'Error',text:'Failed to update student.',confirmButtonColor:'#3085d6'});
     } finally {
       setLoading(false);
     }
@@ -90,7 +105,7 @@ const EditStudent = () => {
       <form className="student-form" onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-group">
-            <label className="custom-label">Full Name</label>
+            <label className="custom-label">Full Name <span style={{ color: 'red' }}>*</span></label>
             <input
               type="text"
               className="custom-input"
@@ -99,11 +114,12 @@ const EditStudent = () => {
               onChange={handleChange}
               placeholder="Enter student's full name"
               required
+              minLength={3}
             />
           </div>
 
           <div className="form-group">
-            <label className="custom-label">Age</label>
+            <label className="custom-label">Age <span style={{ color: 'red' }}>*</span></label>
             <input
               type="number"
               className="custom-input"
@@ -117,7 +133,7 @@ const EditStudent = () => {
           </div>
 
           <div className="form-group">
-            <label className="custom-label">Course</label>
+            <label className="custom-label">Course <span style={{ color: 'red' }}>*</span></label>
             <select
               name="course"
               value={formData.course}
@@ -139,7 +155,7 @@ const EditStudent = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label className="custom-label">Email</label>
+            <label className="custom-label">Email <span style={{ color: 'red' }}>*</span></label>
             <input
               type="email"
               className="custom-input"
@@ -152,7 +168,7 @@ const EditStudent = () => {
           </div>
 
           <div className="form-group">
-            <label className="custom-label">Password</label>
+            <label className="custom-label">Password <span style={{ color: 'red' }}>*</span></label>
             <input
               type="password"
               className="custom-input"
@@ -160,10 +176,12 @@ const EditStudent = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter new password"
+              minLength={8}
+              autoComplete="new-password"
             />
+            <small className="text-muted">Leave blank to keep current password.</small>
           </div>
         </div>
-
         <div className="button-container mt-3 d-flex justify-content-end gap-3">
           <button
             type="submit"

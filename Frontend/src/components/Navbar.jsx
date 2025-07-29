@@ -1,7 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BsSun, BsMoon } from "react-icons/bs";
 import userImg from "../assets/profile.jpg";
+import StudentContext from '../context/StudentContext';
+
+const getInitial = (name) => name ? name.charAt(0).toUpperCase() : '?';
 
 const Navbar = ({ darkMode, toggleTheme }) => {
   const location = useLocation();
@@ -10,6 +13,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null); // "student" or "admin"
   const dropdownRef = useRef();
+  const { user } = useContext(StudentContext);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -86,32 +90,64 @@ const Navbar = ({ darkMode, toggleTheme }) => {
               {darkMode ? <BsSun size={22} /> : <BsMoon size={22} />}
             </button>
           </div>
-
           {isAuthenticated && (
             <div className="avatar-dropdown" ref={dropdownRef}>
-              <img
-                src={userImg}
-                alt="User Avatar"
-                className="avatar-img"
-                onClick={toggleDropdown}
-                style={{ cursor: "pointer" }}
-              />
+              {user && user.avatar ? (
+                <img
+                  src={`http://localhost:5000${user.avatar}`}
+                  alt="User Avatar"
+                  className="avatar-img"
+                  onClick={toggleDropdown}
+                  style={{ cursor: "pointer", objectFit: 'cover', width: 40, height: 40, borderRadius: '50%' }}
+                />
+              ) : (
+                <div
+                  className="avatar-img rounded-circle d-flex align-items-center justify-content-center"
+                  style={{ width: 40, height: 40, background: '#e0e0e0', fontSize: 18, userSelect: 'none', cursor: 'pointer' }}
+                  onClick={toggleDropdown}
+                >
+                  {getInitial(user?.name)}
+                </div>
+              )}
               {dropdownOpen && (
                 <div className="dropdown-menu">
-                  <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                    <i className="fa-solid fa-user"></i> Profile
-                  </Link>
-
-                  {/* Show dashboard only for admin */}
-                  {userRole === "admin" && (
-                    <Link to="/admin-panel" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-                      <i className="fa-solid fa-table-columns"></i> Dashboard
-                    </Link>
+                  {location.pathname === "/profile" ? (
+                    <>
+                      <Link to="/" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                        <i className="fa-solid fa-house"></i> Home
+                      </Link>
+                      {userRole === "admin" && (
+                        <Link
+                          to="/admin-panel"
+                          className="dropdown-item"
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          <i className="fa-solid fa-table-columns"></i> Dashboard
+                        </Link>
+                      )}
+                      <button className="dropdown-item logout-btn" onClick={handleLogout}>
+                        <i className="fa-solid fa-right-from-bracket"></i> Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/profile" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
+                        <i className="fa-solid fa-user"></i> Profile
+                      </Link>
+                      {userRole === "admin" && (
+                        <Link
+                          to="/admin-panel"
+                          className="dropdown-item"
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          <i className="fa-solid fa-table-columns"></i> Dashboard
+                        </Link>
+                      )}
+                      <button className="dropdown-item logout-btn" onClick={handleLogout}>
+                        <i className="fa-solid fa-right-from-bracket"></i> Logout
+                      </button>
+                    </>
                   )}
-
-                  <button className="dropdown-item logout-btn" onClick={handleLogout}>
-                    <i className="fa-solid fa-right-from-bracket"></i> Logout
-                  </button>
                 </div>
               )}
             </div>

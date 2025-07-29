@@ -5,7 +5,13 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || "your_default_secret_key";
 
 const fetchUser = (req, res, next) => {
-  const token = req.header("auth-token"); // Frontend must send this header
+  let token = req.header("auth-token");
+  if (!token) {
+    const authHeader = req.header("Authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.replace("Bearer ", "");
+    }
+  }
   if (!token) {
     return res.status(401).json({ error: "Access denied. Token missing." });
   }

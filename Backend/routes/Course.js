@@ -11,12 +11,12 @@ router.post("/addcourse", fetchUser, isAdmin, async (req, res) => {
   try {
     const { name } = req.body;
 
-    let courseExist = await Course.findOne({ name });
+    let courseExist = await Course.findOne({ name, admin: req.user.id });
     if (courseExist) {
-      return res.status(400).json({ error: "Course already exists" });
+      return res.status(400).json({ error: "Course already exists for this admin" });
     }
 
-    const course = new Course({ name });
+    const course = new Course({ name, admin: req.user.id });
     await course.save();
 
     res.status(201).json(course);
@@ -27,10 +27,10 @@ router.post("/addcourse", fetchUser, isAdmin, async (req, res) => {
 });
 
 // @route   GET /api/course/allcourses
-// @desc    Get all courses - Public (no auth required)
-router.get("/allcourses", async (req, res) => {
+// @desc    Get all courses for the logged-in admin
+router.get("/allcourses", fetchUser, isAdmin, async (req, res) => {
   try {
-    const courses = await Course.find();
+    const courses = await Course.find({ admin: req.user.id });
     res.json(courses);
   } catch (error) {
     console.error(error.message);

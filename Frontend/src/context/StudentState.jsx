@@ -4,7 +4,27 @@ import StudentContext from './StudentContext';
 const StudentState = (props) => {
   const [courses, setCourses] = useState([]);         
   const [students, setStudents] = useState([]);
+  const [user, setUser] = useState(null);
   const token = localStorage.getItem("token");
+
+  // Fetch profile for admin or student
+  const fetchUser = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch("http://localhost:5000/api/profile/me", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch user profile");
+      const data = await res.json();
+      setUser(data);
+    } catch (err) {
+      setUser(null);
+    }
+  };
 
   // Fetch all students
   const allStudent = async () => {
@@ -57,7 +77,7 @@ const StudentState = (props) => {
       }
 
       const data = await response.json();
-      setCourses(data);
+      setCourses(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching courses:", error.message);
       setCourses([]);
@@ -174,6 +194,7 @@ const StudentState = (props) => {
   React.useEffect(() => {
     allStudent();
     fetchCourses();
+    fetchUser();
   }, []);
 
   return (
@@ -188,6 +209,9 @@ const StudentState = (props) => {
         addStudent,
         editStudent,
         deleteStudent,
+        user,
+        setUser,
+        fetchUser,
       }}
     >
       {props.children}

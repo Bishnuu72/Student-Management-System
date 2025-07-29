@@ -6,20 +6,22 @@ const CourseTable = ({ searchQuery }) => {
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
 
+  // Defensive: Ensure course is always an array
+  const safeCourses = Array.isArray(course) ? course.filter(c => c && c._id) : [];
+
   // Get student counts for each course (by matching ObjectId)
   const getCourseCounts = () => {
     const counts = {};
-    course.forEach((c) => {
+    safeCourses.forEach((c) => {
       counts[c._id] = 0;
     });
     student.forEach((s) => {
-      const courseId = typeof s.course === "object" ? s.course._id : s.course;
+      const courseId = typeof s.course === "object" ? s.course?._id : s.course;
       if (courseId && counts[courseId] !== undefined) {
         counts[courseId]++;
       }
     });
-
-    return course.map((c) => [c, counts[c._id] || 0]);
+    return safeCourses.map((c) => [c, counts[c._id] || 0]);
   };
 
   // Add course with backend API call

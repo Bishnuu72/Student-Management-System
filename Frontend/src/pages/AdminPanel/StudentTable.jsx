@@ -1,7 +1,9 @@
 import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StudentContext from '../../context/StudentContext';
-import stdImg from '../../assets/profile.jpg';
+// import stdImg from '../../assets/profile.jpg';
+
+const getInitial = (name) => name ? name.charAt(0).toUpperCase() : '?';
 
 const StudentTable = ({ searchQuery }) => {
   const navigate = useNavigate();
@@ -70,13 +72,23 @@ const StudentTable = ({ searchQuery }) => {
                 <tr key={std._id}>
                   <td>{index + 1}</td>
                   <td>
-                    <img
-                      src={stdImg}
-                      alt={std.name || "Student"}
-                      className="student-img rounded-circle"
-                      width="40"
-                      height="40"
-                    />
+                    {std.avatar ? (
+                      <img
+                        src={`http://localhost:5000${std.avatar}`}
+                        alt={std.name || "Student"}
+                        className="student-img rounded-circle"
+                        width="40"
+                        height="40"
+                        style={{ objectFit: 'cover', background: '#f8f9fa' }}
+                      />
+                    ) : (
+                      <div
+                        className="rounded-circle d-flex align-items-center justify-content-center"
+                        style={{ width: 40, height: 40, background: '#e0e0e0', fontSize: 18, userSelect: 'none' }}
+                      >
+                        {getInitial(std.name)}
+                      </div>
+                    )}
                   </td>
                   <td>{std.name || "N/A"}</td>
                   <td>{std.email || "N/A"}</td>
