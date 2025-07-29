@@ -556,13 +556,11 @@ body {
   color: #333;
 }
 
-/* Layout */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
 }
 
-/* Sidebar */
 .sidebar {
   width: 240px;
   background-color: #151d32;
@@ -622,10 +620,43 @@ body {
 }
 
 .welcome-message {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 25px;
+  text-align: center;
+  font-size: 2rem !important; /* increased from 'large' */
+  font-weight: 900; /* bold and heavy */
+  color: #ebe413;
+  text-shadow: 0 0 5px #000000, 0 0 8px #ff0000, 0 0 12px #00ff00;
+  transition: all 0.3s ease-in-out;
+  padding: 12px 0;
+  position: relative;
+  letter-spacing: 1px;
 }
+
+/* Glowing effect on hover and underline animation */
+.welcome-message:hover {
+  text-shadow: 0 0 6px #000000, 0 0 12px #ff3333, 0 0 20px #33ff33;
+  cursor: pointer;
+}
+
+/* Underline effect using ::after */
+.welcome-message::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%) scaleX(0);
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #ff0000, #000000, #00ff00);
+  transition: transform 0.3s ease-in-out;
+  transform-origin: center;
+}
+
+.welcome-message:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+
+
 
 /* Search Bar */
 .search-bar {
@@ -971,4 +1002,347 @@ body {
 .blockquote-footer {
   font-size: 0.9rem;
   margin-top: 10px;
+}
+
+
+
+/* Admin Dashboard CSS  */
+
+/* External CSS for SMS glow effect */
+.sms-glow {
+  font-family: 'Pacifico', 'Caveat', cursive, sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: 2px;
+  color: #fff;
+  background: linear-gradient(90deg, #00c3ff, #ffff1c, #ff00cc, #00ffb3);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: smsFlow 3s ease-in-out infinite;
+  text-shadow: 0 0 8px #00c3ff, 0 0 16px #ff00cc;
+  cursor: pointer;
+  transition: text-shadow 0.3s;
+  display: inline-block;
+}
+
+.sms-glow:hover {
+  text-shadow: 0 0 16px #fff, 0 0 32px #00c3ff, 0 0 32px #ff00cc;
+  filter: brightness(1.2);
+}
+
+@keyframes smsFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.scrolling-title {
+  white-space: nowrap;
+  animation: scroll-left 50s linear infinite;
+  font-size: 1.25rem;
+  padding-left: 1rem;
+  color: red; /* Bootstrap primary */
+  font-weight: bold;
+}
+
+.slogan-divider {
+  height: 5px;               /* Thickness */
+  width: 100%;               /* Full width */
+  border-radius: 4px;        /* Rounded edges */
+  background: linear-gradient(to right, red, black, green);
+  background-size: 200% 100%;
+  animation: scroll-gradient 3s linear infinite;
+  box-shadow:
+    0 0 5px green,
+    0 0 10px black,
+    0 0 15px green;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+@keyframes scroll-gradient {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+
+/* Glowing effect and underline on hover for section titles */
+.report-header h3,
+.analytics h3 {
+  /* color: #00b3ff; */
+  text-shadow:
+    0 0 5px #00b3ff,
+    0 0 10px #00b3ff,
+    0 0 20px #00b3ff;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  transition: color 0.3s ease;
+}
+
+.report-header h3:hover,
+.analytics h3:hover {
+  text-decoration: none;
+  /* color: #00f7ff; */
+}
+
+.report-header h3::after,
+.analytics h3::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 3px;
+  bottom: -6px;
+  left: 50%;
+  background: #00f7ff;
+  transition: width 0.3s ease, left 0.3s ease;
+  border-radius: 2px;
+}
+
+.report-header h3:hover::after,
+.analytics h3:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+/* Report Summary boxes styling */
+.summary-cards {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.summary-cards .card {
+  flex: 1;
+  background: #0a0f1c;
+  border: 2px solid #00b3ff;
+  border-radius: 12px;
+  box-shadow:
+    0 0 15px rgba(0, 179, 255, 0.4),
+    inset 0 0 10px rgba(0, 179, 255, 0.2);
+  padding: 1.8rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summary-cards .card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 0 25px rgba(0, 255, 255, 0.7),
+    inset 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+/* Icon centering and styling */
+.summary-cards .card i {
+  font-size: 48px;
+  color: #00b3ff;
+  margin-bottom: 0.8rem;
+  align-self: center;
+}
+
+/* Card titles and values */
+.card-title {
+  font-size: 1.2rem;
+  color: #e0e0e0;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.card-value {
+  font-size: 2rem;
+  color: #00f7ff;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* Stylish button inside cards */
+.view-link-btn {
+  padding: 0.5rem 1.4rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #00b3ff;
+  background: transparent;
+  border: 2px solid #00b3ff;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: center;
+  text-transform: uppercase;
+}
+
+.view-link-btn:hover {
+  background: #00b3ff;
+  color: #0a0f1c;
+  box-shadow: 0 0 15px #00b3ff;
+}
+
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #121212;
+  color: #fff;
+  padding: 20px 0;
+}
+
+.sidebar-logo-glow .sms-glow {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #00b3ff;
+}
+
+.admin-profile {
+  margin: 15px 0;
+  text-align: center;
+}
+
+.admin-email {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.sidebar-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  padding: 12px 20px;
+  cursor: pointer;
+}
+
+.sidebar-menu li.active,
+.sidebar-menu li:hover {
+  background-color: #1f1f1f;
+  color: #00b3ff;
+}
+
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+.top-headbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.avatar-img {
+  width: 40px;
+  height: 40px;
+  background: #ddd;
+  border-radius: 50%;
+}
+
+.dropdown-menu {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ddd;
+  right: 20px;
+  top: 60px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  display: block;
+  color: #333;
+  text-decoration: none;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: #d9534f;
+  width: 100%;
+  text-align: left;
+}
+
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex: 1;
+}
+
+.view-link-btn {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  padding: 5px 10px;
+  background-color: #00b3ff;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.analytics-title {
+  color: #00b3ff;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+canvas {
+  margin: auto;
+}
+
+
+.avatar-img {
+  transition: all 0.3s ease-in-out;
+}
+
+.avatar-img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 179, 255, 0.6);
+  border: 2px solid #00b3ff;
+}
+
+
+.admin-email {
+  align-self: flex-start;
+  font-size: 17px;
+  color: #f5f5f5;
+  transition: all 0.3s ease;
+  text-align: left;
+  cursor: default;
+  margin-top: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.admin-email:hover {
+  color: #00b3ff;
+  text-decoration: underline;
+  text-shadow: 0 0 5px #00b3ff;
 }
