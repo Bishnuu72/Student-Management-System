@@ -70,12 +70,23 @@ const AddStudent = () => {
     }
   };
 
-  // Cancel and go back
-  const handleCancel = () => {
-    if (window.confirm("Are you sure you want to cancel?")) {
+  // Cancel and go back with SweetAlert confirmation
+  const handleCancel = async () => {
+    const result = await window.Swal.fire({
+      title: "Are you sure you want to cancel?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
       navigate('/admin-panel');
     }
   };
+
+
 
   return (
     <div className="student-form-container">

@@ -54,7 +54,10 @@ const Profile = ({ darkMode }) => {
   };
 
   const handleImageUpload = async () => {
-    if (!imageFile) return alert("No file selected");
+    if (!imageFile) {
+      Swal.fire("No File", "Please select an image to upload", "info");
+      return;
+    }
     const formDataImage = new FormData();
     formDataImage.append("file", imageFile);
     try {
@@ -71,12 +74,13 @@ const Profile = ({ darkMode }) => {
       setAvatarPreview(`http://localhost:5000${avatarRes.data.avatar}`);
       setImageFile(null);
       await fetchUser();
-      alert("Profile picture updated!");
+      Swal.fire("Success", "Profile picture updated!", "success");
     } catch (err) {
       console.error(err);
-      alert("Upload failed");
+      Swal.fire("Error", "Upload failed", "error");
     }
   };
+
 
   const handleImageDelete = async () => {
     try {
@@ -85,12 +89,13 @@ const Profile = ({ darkMode }) => {
       });
       setUser((prev) => ({ ...prev, avatar: null }));
       setAvatarPreview(null);
-      alert("Profile picture deleted!");
+      Swal.fire("Deleted!", "Profile picture deleted!", "success");
     } catch (err) {
       console.error(err);
-      alert("Failed to delete image");
+      Swal.fire("Error", "Failed to delete image", "error");
     }
   };
+
 
   const handleSubmit = async () => {
     try {
@@ -100,12 +105,13 @@ const Profile = ({ darkMode }) => {
       setUser(res.data.updatedUser || res.data);
       setEditMode(false);
       setShowSocialEdit(false);
-      alert("Profile updated successfully");
+      Swal.fire("Updated", "Profile updated successfully", "success");
     } catch (err) {
       console.error("Failed to update profile", err);
-      alert("Profile update failed");
+      Swal.fire("Error", "Profile update failed", "error");
     }
   };
+
 
   if (!user) return <p className="text-center mt-5">Loading profile...</p>;
 

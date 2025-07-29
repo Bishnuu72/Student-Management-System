@@ -6,10 +6,8 @@ const CourseTable = ({ searchQuery }) => {
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
 
-  // Defensive: Ensure course is always an array
   const safeCourses = Array.isArray(course) ? course.filter(c => c && c._id) : [];
 
-  // Get student counts for each course (by matching ObjectId)
   const getCourseCounts = () => {
     const counts = {};
     safeCourses.forEach((c) => {
@@ -24,14 +22,30 @@ const CourseTable = ({ searchQuery }) => {
     return safeCourses.map((c) => [c, counts[c._id] || 0]);
   };
 
-  // Add course with backend API call
   const handleAddCourse = async () => {
-    const newCourseName = prompt("Enter the name of the new course:")?.trim();
+    const { value: newCourseName } = await window.Swal.fire({
+      title: 'Enter the name of the new course:',
+      input: 'text',
+      inputPlaceholder: 'Course name',
+      showCancelButton: true,
+      confirmButtonText: 'Add',
+      cancelButtonText: 'Cancel',
+      inputValidator: (value) => {
+        if (!value || !value.trim()) {
+          return 'Course name cannot be empty!';
+        }
+      }
+    });
+
     if (!newCourseName) return;
 
-    const exists = course.some(c => c.name.toLowerCase() === newCourseName.toLowerCase());
+    const trimmedName = newCourseName.trim();
+    const exists = course.some(c => c.name.toLowerCase() === trimmedName.toLowerCase());
     if (exists) {
-      alert("Course already exists.");
+      window.Swal.fire({
+        icon: 'error',
+        title: 'Course already exists.',
+      });
       return;
     }
 
@@ -43,7 +57,7 @@ const CourseTable = ({ searchQuery }) => {
           "Content-Type": "application/json",
           "auth-token": token,
         },
-        body: JSON.stringify({ name: newCourseName }),
+        body: JSON.stringify({ name: trimmedName }),
       });
 
       if (!response.ok) {
@@ -52,23 +66,49 @@ const CourseTable = ({ searchQuery }) => {
       }
 
       await fetchCourses();
-      alert(`Course "${newCourseName}" added successfully.`);
+      window.Swal.fire({
+        icon: 'success',
+        title: `Course "${trimmedName}" added successfully.`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (error) {
-      alert("Error adding course: " + error.message);
+      window.Swal.fire({
+        icon: 'error',
+        title: 'Error adding course',
+        text: error.message,
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete course with backend API call
   const handleDeleteCourse = async (courseObj) => {
-    const studentCount = student.filter((s) => s.course === courseObj._id).length;
+    const studentCount = student.filter((s) => {
+      const courseId = typeof s.course === "object" ? s.course?._id : s.course;
+      return courseId === courseObj._id;
+    }).length;
+
     if (studentCount > 0) {
-      alert("Cannot delete course. Students are enrolled in it.");
+      window.Swal.fire({
+        icon: 'error',
+        title: 'Cannot delete course',
+        text: 'Students are enrolled in it.',
+      });
       return;
     }
 
-    if (!window.confirm(`Are you sure you want to delete "${courseObj.name}"?`)) return;
+    const result = await window.Swal.fire({
+      title: `Are you sure you want to delete "${courseObj.name}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      dangerMode: true,
+    });
+
+    if (!result.isConfirmed) return;
 
     setLoading(true);
     try {
@@ -86,9 +126,18 @@ const CourseTable = ({ searchQuery }) => {
       }
 
       await fetchCourses();
-      alert(`Course "${courseObj.name}" deleted successfully.`);
+      window.Swal.fire({
+        icon: 'success',
+        title: `Course "${courseObj.name}" deleted successfully.`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (error) {
-      alert("Error deleting course: " + error.message);
+      window.Swal.fire({
+        icon: 'error',
+        title: 'Error deleting course',
+        text: error.message,
+      });
     } finally {
       setLoading(false);
     }
@@ -96,22 +145,17 @@ const CourseTable = ({ searchQuery }) => {
 
   const courseList = getCourseCounts();
 
-  // Filtered course list using searchQuery
   const filteredCourseList = courseList.filter(([courseObj]) => {
     const query = searchQuery?.toLowerCase() || "";
     return courseObj.name.toLowerCase().includes(query);
   });
 
   return (
-    <div className="student-form-container mt-5">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="form-title mb-0">Course-wise Enrollment Summary</h2>
-        <button
-          className="btn btn-primary"
-          onClick={handleAddCourse}
-          disabled={loading}
-        >
-          + Add Course
+    <div className="container mt-5 mb-5 course-table-container">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h3 className="section-title">Course List</h3>
+        <button className="btn btn-success" onClick={handleAddCourse} disabled={loading}>
+          <i className="fas fa-plus me-2"></i> Add Course
         </button>
       </div>
 
@@ -120,9 +164,9 @@ const CourseTable = ({ searchQuery }) => {
       ) : filteredCourseList.length === 0 ? (
         <p className="text-center text-muted">No matching courses found.</p>
       ) : (
-        <div className="table-responsive">
-          <table className="table table-bordered table-hover text-center">
-            <thead className="table-head">
+        <div className="table-responsive shadow-sm rounded">
+          <table className="table table-bordered table-hover align-middle text-center">
+            <thead className="table-primary">
               <tr>
                 <th>S.N</th>
                 <th>Course Name</th>

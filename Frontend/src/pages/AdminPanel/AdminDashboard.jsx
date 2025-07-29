@@ -193,8 +193,8 @@ const AdminDashboard = () => {
           <div className="search-bar">
             <input
               type="text"
-              placeholder="Search students by name, email or course"
-              className="form-control search-input"
+              placeholder="Search students by name or course..."
+              className="search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

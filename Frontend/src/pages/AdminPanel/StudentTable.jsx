@@ -26,9 +26,27 @@ const StudentTable = ({ searchQuery }) => {
     navigate("/edit-student", { state: std });
   };
 
-  const handleDeleteStudent = (id) => {
-    if (window.confirm("Are you sure you want to delete this student?")) {
+  const handleDeleteStudent = async (id) => {
+    const result = await window.Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel"
+    });
+
+    if (result.isConfirmed) {
       deleteStudent(id);
+      window.Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Student has been deleted.",
+        timer: 1500,
+        showConfirmButton: false
+      });
     }
   };
 

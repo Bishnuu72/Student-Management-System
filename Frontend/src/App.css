@@ -1346,3 +1346,55 @@ canvas {
   text-decoration: underline;
   text-shadow: 0 0 5px #00b3ff;
 }
+
+
+/* Updated Search Bar Styles */
+.search-bar {
+  position: relative;
+  width: 60%;
+  max-width: 90%;
+  margin: 1.5rem auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 45px 10px 14px;
+  border: 2px solid #00b3ff;
+  border-radius: 50px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #fff;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 8px #00b3ff;
+}
+
+.search-button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background-color: #00b3ff;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 6px rgba(0, 179, 255, 0.8), 0 0 12px rgba(0, 179, 255, 0.4);
+}
+
+.search-button:hover {
+  background-color: #009fe3;
+  box-shadow: 0 0 12px #00d9ff, 0 0 20px #00f0ff;
+}
+
+.search-button i {
+  font-size: 0.9rem;
+}
