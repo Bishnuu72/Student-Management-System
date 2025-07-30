@@ -1,58 +1,51 @@
+// index.js
 const express = require('express');
 const dotenv = require("dotenv");
-const dbConnect = require("./config/db");
 const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
 const cors = require("cors");
+const connectDB = require("./config/db");
 
-// Load environment variables early
-dotenv.config();
+dotenv.config(); // Load env variables
 
-// Connect to MongoDB with fallback URI
-const connectDB = async () => {
-  try {
-    const mongoURI = process.env.MONGO_URI;
-    await require("mongoose").connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("✅ MongoDB connected successfully.");
-  } catch (error) {
-    console.error("❌ MongoDB connection failed:", error.message);
-    process.exit(1);
-  }
-};
-
+// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Middleware
-app.use(cors()); // 👈 Allow cross-origin requests (important for frontend)
-app.use(express.json()); // 👈 Enable JSON parsing
+// Allowed origins for CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://student-management-system-j8f3.onrender.com",
+];
 
-// Port fallback in case .env is missing
-const port = process.env.PORT || 5000;
+// CORS Middleware
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin like mobile apps or curl requests
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+}));
 
-// 👋 Simple route
-app.get('/', (req, res) => {
-  res.send('Hello Bishnu!');
-});
+// JSON parser middleware
+app.use(express.json());
 
-// 📂 Ensure uploads directory exists
-const ensureUploadsDirectoryExists = () => {
-  const dir = path.join(__dirname, "uploads");
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-};
-ensureUploadsDirectoryExists();
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
-// 🧾 Multer config for file uploads
+// Multer storage setup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "uploads"));
+    cb(null, uploadsDir);
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
@@ -62,22 +55,31 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Serve uploads statically
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Serve uploaded files statically
+app.use("/uploads", express.static(uploadsDir));
 
-// Handle file upload request
+// Health check route
+app.get('/', (req, res) => {
+  res.send('Hello Bishnu! 🚀 Backend is running.');
+});
+
+// File upload route
 app.post("/upload", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
   res.json({ filePath: `/uploads/${req.file.filename}` });
 });
 
-// 👉 Student routes
+// API routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/students", require("./routes/Student"));
 app.use("/api/courses", require("./routes/Course"));
 app.use("/students/auth", require("./routes/StudentAuth"));
 app.use("/api/profile", require("./routes/Profile"));
 
-// 🚀 Start server
+// Start server
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log(`Server running on ${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
