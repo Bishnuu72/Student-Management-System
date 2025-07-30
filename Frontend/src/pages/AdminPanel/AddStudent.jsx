@@ -23,7 +23,12 @@ const AddStudent = () => {
 
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'age' ? value.replace(/\D/, '') : value, // restrict age to digits
+      [name]:
+        name === 'age'
+          ? value.replace(/\D/, '')
+          : name === 'email'
+          ? value.toLowerCase()
+          : value,
     }));
   };
 
@@ -44,11 +49,22 @@ const AddStudent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateName(formData.name)) {
-      window.Swal.fire({icon:'error',title:'Invalid Name',text:'Name must be at least 3 characters.',confirmButtonColor:'#3085d6'});
+      window.Swal.fire({
+        icon: 'error',
+        title: 'Invalid Name',
+        text: 'Name must be at least 3 characters.',
+        confirmButtonColor: '#3085d6',
+      });
       return;
     }
     if (!validatePassword(formData.password)) {
-      window.Swal.fire({icon:'error',title:'Weak Password',text:'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.',confirmButtonColor:'#3085d6'});
+      window.Swal.fire({
+        icon: 'error',
+        title: 'Weak Password',
+        text:
+          'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.',
+        confirmButtonColor: '#3085d6',
+      });
       return;
     }
     const studentPayload = {
@@ -58,13 +74,24 @@ const AddStudent = () => {
     try {
       setLoading(true);
       await addStudent(studentPayload);
-      window.Swal.fire({icon:'success',title:'Student Added',text:'Student has been added successfully.',timer:1500,showConfirmButton:false});
-      setTimeout(()=>{
+      window.Swal.fire({
+        icon: 'success',
+        title: 'Student Added',
+        text: 'Student has been added successfully.',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      setTimeout(() => {
         setFormData({ name: '', email: '', password: '', age: '', course: '' });
         navigate('/admin-panel');
       }, 1500);
     } catch (error) {
-      window.Swal.fire({icon:'error',title:'Error',text:'Failed to add student. Try again.',confirmButtonColor:'#3085d6'});
+      window.Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to add student. Try again.',
+        confirmButtonColor: '#3085d6',
+      });
     } finally {
       setLoading(false);
     }
@@ -86,8 +113,6 @@ const AddStudent = () => {
     }
   };
 
-
-
   return (
     <div className="student-form-container">
       <h2 className="form-title">Student Enrollment Form</h2>
@@ -95,7 +120,9 @@ const AddStudent = () => {
       <form className="student-form" onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-group">
-            <label className="custom-label">Full Name <span style={{ color: 'red' }}>*</span></label>
+            <label className="custom-label">
+              Full Name <span style={{ color: 'red' }}>*</span>
+            </label>
             <input
               type="text"
               className="custom-input"
@@ -108,7 +135,9 @@ const AddStudent = () => {
             />
           </div>
           <div className="form-group">
-            <label className="custom-label">Age <span style={{ color: 'red' }}>*</span></label>
+            <label className="custom-label">
+              Age <span style={{ color: 'red' }}>*</span>
+            </label>
             <input
               type="number"
               className="custom-input"
@@ -121,7 +150,9 @@ const AddStudent = () => {
             />
           </div>
           <div className="form-group">
-            <label className="custom-label">Course <span style={{ color: 'red' }}>*</span></label>
+            <label className="custom-label">
+              Course <span style={{ color: 'red' }}>*</span>
+            </label>
             <select
               className="custom-input"
               name="course"
@@ -143,7 +174,9 @@ const AddStudent = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label className="custom-label">Email <span style={{ color: 'red' }}>*</span></label>
+            <label className="custom-label">
+              Email <span style={{ color: 'red' }}>*</span>
+            </label>
             <input
               type="email"
               className="custom-input"
@@ -155,7 +188,9 @@ const AddStudent = () => {
             />
           </div>
           <div className="form-group">
-            <label className="custom-label">Password <span style={{ color: 'red' }}>*</span></label>
+            <label className="custom-label">
+              Password <span style={{ color: 'red' }}>*</span>
+            </label>
             <input
               type="password"
               className="custom-input"
@@ -170,11 +205,7 @@ const AddStudent = () => {
           </div>
         </div>
         <div className="button-container d-flex justify-content-end gap-3 mt-3">
-          <button
-            type="submit"
-            className="btn-submit"
-            disabled={loading}
-          >
+          <button type="submit" className="btn-submit" disabled={loading}>
             {loading ? 'Adding...' : 'Add Student'}
           </button>
           <button

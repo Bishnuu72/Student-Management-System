@@ -5,6 +5,7 @@ import StudentContext from '../../context/StudentContext';
 const getInitial = (name) => name ? name.charAt(0).toUpperCase() : '?';
 
 const StudentTable = ({ searchQuery }) => {
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const { student, allStudent, deleteStudent } = useContext(StudentContext);
 
@@ -58,7 +59,7 @@ const StudentTable = ({ searchQuery }) => {
   });
 
   return (
-    <div className="container student-table-container mt-5 mb-5">
+    <div className="w-100 container student-table-container mt-5 mb-5 px-0">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3 className="section-title">Students List</h3>
         <button className="btn btn-success" onClick={handleAddStudent}>
@@ -95,7 +96,7 @@ const StudentTable = ({ searchQuery }) => {
                     >
                       {std.avatar ? (
                         <img
-                          src={`http://localhost:5000${std.avatar}`}
+                          src={`${API_BASE_URL}${std.avatar}`}
                           alt={std.name || "Student"}
                           className="rounded-circle"
                           width="40"

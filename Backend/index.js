@@ -12,7 +12,7 @@ dotenv.config();
 // Connect to MongoDB with fallback URI
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/student_management";
+    const mongoURI = process.env.MONGO_URI;
     await require("mongoose").connect(mongoURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -79,5 +79,5 @@ app.use("/api/profile", require("./routes/Profile"));
 
 // 🚀 Start server
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on ${port}`);
 });

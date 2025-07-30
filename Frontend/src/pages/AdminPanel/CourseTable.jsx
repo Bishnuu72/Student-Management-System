@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import StudentContext from '../../context/StudentContext';
 
 const CourseTable = ({ searchQuery }) => {
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
   const { student, course, setCourse, fetchCourses } = useContext(StudentContext);
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
@@ -51,7 +52,7 @@ const CourseTable = ({ searchQuery }) => {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/courses/addcourse", {
+      const response = await fetch(`${API_BASE_URL}/api/courses/addcourse`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -112,7 +113,7 @@ const CourseTable = ({ searchQuery }) => {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/courses/deletecourses/${courseObj._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/courses/deletecourses/${courseObj._id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

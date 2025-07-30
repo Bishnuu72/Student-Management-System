@@ -14,6 +14,7 @@ const socialIcons = {
 };
 
 const Profile = ({ darkMode }) => {
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
   const { user, setUser, fetchUser } = useContext(StudentContext);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({});
@@ -31,7 +32,7 @@ const Profile = ({ darkMode }) => {
   useEffect(() => {
     if (user) {
       setFormData(user);
-      setAvatarPreview(user.avatar ? `http://localhost:5000${user.avatar}` : null);
+      setAvatarPreview(user.avatar ? `${API_BASE_URL}${user.avatar}` : null);
       setSocialLinks(user.socialLinks || { facebook: '', instagram: '', twitter: '', linkedin: '' });
     }
   }, [user]);
@@ -61,17 +62,17 @@ const Profile = ({ darkMode }) => {
     const formDataImage = new FormData();
     formDataImage.append("file", imageFile);
     try {
-      const uploadRes = await axios.post("http://localhost:5000/upload", formDataImage, {
+      const uploadRes = await axios.post(`${API_BASE_URL}/upload`, formDataImage, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const filePath = uploadRes.data.filePath;
-      const avatarRes = await axios.put("http://localhost:5000/api/profile/update-avatar", {
+      const avatarRes = await axios.put(`${API_BASE_URL}/api/profile/update-avatar`, {
         avatar: filePath,
       }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser((prev) => ({ ...prev, avatar: avatarRes.data.avatar }));
-      setAvatarPreview(`http://localhost:5000${avatarRes.data.avatar}`);
+      setAvatarPreview(`${API_BASE_URL}${avatarRes.data.avatar}`);
       setImageFile(null);
       await fetchUser();
       Swal.fire("Success", "Profile picture updated!", "success");
@@ -84,7 +85,7 @@ const Profile = ({ darkMode }) => {
 
   const handleImageDelete = async () => {
     try {
-      await axios.delete("http://localhost:5000/api/profile/delete-avatar", {
+      await axios.delete(`${API_BASE_URL}/api/profile/delete-avatar`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser((prev) => ({ ...prev, avatar: null }));
@@ -99,7 +100,7 @@ const Profile = ({ darkMode }) => {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.put("http://localhost:5000/api/profile/update-profile", { ...formData, socialLinks }, {
+      const res = await axios.put(`${API_BASE_URL}/api/profile/update-profile`, { ...formData, socialLinks }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data.updatedUser || res.data);

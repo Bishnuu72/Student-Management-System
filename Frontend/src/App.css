@@ -1398,3 +1398,23 @@ canvas {
 .search-button i {
   font-size: 0.9rem;
 }
+
+/* CourseTable.css */
+
+.course-table-container {
+  max-width: 1040px;   /* or 600px if you want it tighter */
+  margin: 2rem auto;  /* centers it horizontally */
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.course-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.course-table {
+  width: 100%;
+}

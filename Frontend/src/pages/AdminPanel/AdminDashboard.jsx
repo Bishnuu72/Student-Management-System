@@ -12,6 +12,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : '?');
 
 const AdminDashboard = () => {
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
@@ -149,7 +150,7 @@ const AdminDashboard = () => {
           <div className="admin-profile top-avatar" ref={avatarRef}>
             {user && user.avatar ? (
               <img
-                src={`http://localhost:5000${user.avatar}`}
+                src={`${API_BASE_URL}${user.avatar}`}
                 alt="User Avatar"
                 className="avatar-img rounded-circle"
                 style={{ objectFit: 'cover', width: 40, height: 40, cursor: 'pointer' }}

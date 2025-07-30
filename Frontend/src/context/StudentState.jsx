@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import StudentContext from './StudentContext';
 
 const StudentState = (props) => {
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
   const [courses, setCourses] = useState([]);         
   const [students, setStudents] = useState([]);
   const [user, setUser] = useState(null);
@@ -11,7 +12,7 @@ const StudentState = (props) => {
   const fetchUser = async () => {
     if (!token) return;
     try {
-      const res = await fetch("http://localhost:5000/api/profile/me", {
+      const res = await fetch(`${API_BASE_URL}/api/profile/me`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -34,7 +35,7 @@ const StudentState = (props) => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:5000/students/allstudents", {
+      const response = await fetch(`${API_BASE_URL}/students/allstudents`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +64,7 @@ const StudentState = (props) => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:5000/api/courses/allcourses", {
+      const response = await fetch(`${API_BASE_URL}/api/courses/allcourses`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +102,7 @@ const StudentState = (props) => {
         ...studentData,
         course: selectedCourse._id,
       };
-      const response = await fetch("http://localhost:5000/students/addstudent", {
+      const response = await fetch(`${API_BASE_URL}/students/addstudent`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -138,7 +139,7 @@ const StudentState = (props) => {
         course: selectedCourse ? selectedCourse._id : updateData.course,
       };
 
-      const response = await fetch(`http://localhost:5000/students/update/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/students/update/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -168,7 +169,7 @@ const StudentState = (props) => {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:5000/students/delete/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/students/delete/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
