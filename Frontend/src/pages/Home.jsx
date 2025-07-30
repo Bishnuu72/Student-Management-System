@@ -1,14 +1,12 @@
 import React from 'react'
 import Banner from '../components/Banner'
 import About from './About'
-import Contact from './Contact'
 
-const Home = () => {
+const Home = ({darkMode, toggleTheme}) => {
   return (
     <div>
-        <Banner />
-        <About />
-        <Contact />
+        <Banner  />
+        <About darkMode={darkMode} toggleTheme={toggleTheme} />
     </div>
   )
 }

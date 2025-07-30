@@ -27,7 +27,7 @@ const Footer = ({ darkMode }) => {
               <h6 className="footer-heading">Quick Links</h6>
               <ul className="list-unstyled">
                 <li><Link to="/" className="footer-link">Home</Link></li>
-                <li><Link to="/about" className="footer-link">About</Link></li>
+                {/* <li><Link to="/about" className="footer-link">About</Link></li> */}
                 <li><Link to="/contact" className="footer-link">Contact</Link></li>
                 <li><Link to="/admin-login" className="footer-link">Admin Login</Link></li>
                 <li><Link to="/student-login" className="footer-link">Student Login</Link></li>

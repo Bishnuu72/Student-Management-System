@@ -13,8 +13,6 @@ const connectDB = async () => {
   try {
     const mongoURI = process.env.MONGO_URI;
     await require("mongoose").connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
     });
     console.log("✅ MongoDB connected successfully.");
   } catch (error) {
@@ -34,34 +32,6 @@ app.use(cors({
   ],
   credentials: true,
 }));
-
-// Middleware for handling CORS POLICY
-// app.use(cors());
-// app.use(
-//   cors({
-//     origin: ["https://localhost:5173",
-//       "https://student-management-system-phi-inky.vercel.app"
-//     ],
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     allowedHeaders: ["Content-Type"],
-//   })
-//  );
-
-// const allowedOrigins = [
-//   "http://localhost:5173",
-//   "https://student-management-system-phi-inky.vercel.app"
-// ];
-
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-//   credentials: true,
-// }));
 
 app.use(express.json()); // 👈 Enable JSON parsing
 

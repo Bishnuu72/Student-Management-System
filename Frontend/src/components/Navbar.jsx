@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BsSun, BsMoon } from "react-icons/bs";
-import userImg from "../assets/profile.jpg";
 import StudentContext from '../context/StudentContext';
 
 const getInitial = (name) => name ? name.charAt(0).toUpperCase() : '?';
 
 const Navbar = ({ darkMode, toggleTheme }) => {
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
   const location = useLocation();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -52,7 +52,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
   // Nav links shown only if not logged in
   const navItems = [
     { to: "/", icon: "fa-house", label: "Home" },
-    { to: "/about", icon: "fa-circle-info", label: "About" },
+    // { to: "/about", icon: "fa-circle-info", label: "About" },
     { to: "/contact", icon: "fa-envelope", label: "Contact" },
     !isAuthenticated && { to: "/student-login", icon: "fa-user-graduate", label: "Student" },
     !isAuthenticated && { to: "/admin-login", icon: "fa-user-shield", label: "Admin" },
@@ -94,7 +94,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
             <div className="avatar-dropdown" ref={dropdownRef}>
               {user && user.avatar ? (
                 <img
-                  src={`http://localhost:5000${user.avatar}`}
+                  src={`${API_BASE_URL}${user.avatar}`}
                   alt="User Avatar"
                   className="avatar-img"
                   onClick={toggleDropdown}
