@@ -16,7 +16,7 @@ const app = express();
 // ✅ Allowed origins for CORS
 const allowedOrigins = [
   "http://localhost:5174",                          // Local frontend dev
-  "https://student-management-system.vercel.app",   // Your deployed frontend
+  "https://student-management-syst-git-0e1096-bishnu-kumar-yadavs-projects.vercel.app/",   // Your deployed frontend
 ];
 
 // ✅ Enable dynamic CORS for specific origins
