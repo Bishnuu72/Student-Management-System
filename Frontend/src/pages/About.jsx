@@ -27,7 +27,7 @@ const About = () => {
         <p className="mb-0">
           "Empowering institutions with simplified student data handling and a clean user experience."
         </p>
-        <footer className="blockquote-footer">Student Management Team</footer>
+        <footer className="blockquote-footer">Student Management Team BKY</footer>
       </blockquote>
     </div>
   );
