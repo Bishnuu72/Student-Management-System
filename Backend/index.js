@@ -1,4 +1,3 @@
-// index.js
 const express = require('express');
 const dotenv = require("dotenv");
 const path = require("path");
@@ -7,42 +6,42 @@ const multer = require("multer");
 const cors = require("cors");
 const connectDB = require("./config/db");
 
-dotenv.config(); // Load env variables
+dotenv.config(); // Load environment variables early
 
-// Connect to MongoDB
+// ✅ Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Allowed origins for CORS
+// ✅ Allowed origins for CORS
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://student-management-system-j8f3.onrender.com",
+  "http://localhost:5174",                          // Local frontend dev
+  "https://student-management-system.vercel.app",   // Your deployed frontend
 ];
 
-// CORS Middleware
+// ✅ Enable dynamic CORS for specific origins
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin like mobile apps or curl requests
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
+    // Allow requests with no origin (like mobile apps, Postman, curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
     }
-    callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
 }));
 
-// JSON parser middleware
+// ✅ Parse JSON bodies
 app.use(express.json());
 
-// Ensure uploads directory exists
+// ✅ Ensure 'uploads' directory exists
 const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Multer storage setup
+// ✅ Multer setup for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadsDir);
@@ -55,15 +54,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Serve uploaded files statically
+// ✅ Serve uploaded files statically
 app.use("/uploads", express.static(uploadsDir));
 
-// Health check route
+// ✅ Health check route
 app.get('/', (req, res) => {
   res.send('Hello Bishnu! 🚀 Backend is running.');
 });
 
-// File upload route
+// ✅ File upload endpoint
 app.post("/upload", upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
@@ -71,14 +70,14 @@ app.post("/upload", upload.single("file"), (req, res) => {
   res.json({ filePath: `/uploads/${req.file.filename}` });
 });
 
-// API routes
+// ✅ API Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/students", require("./routes/Student"));
 app.use("/api/courses", require("./routes/Course"));
 app.use("/students/auth", require("./routes/StudentAuth"));
 app.use("/api/profile", require("./routes/Profile"));
 
-// Start server
+// ✅ Start the server
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`🚀 Server running on port ${port}`);
