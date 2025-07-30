@@ -6,42 +6,47 @@ const multer = require("multer");
 const cors = require("cors");
 const connectDB = require("./config/db");
 
-dotenv.config(); // Load environment variables early
+dotenv.config();
 
-// ✅ Connect to MongoDB
+// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// ✅ Allowed origins for CORS
+// ✅ Allowed origins without trailing slash
 const allowedOrigins = [
-  "http://localhost:5174",                          // Local frontend dev
-  "https://student-management-system-phi-inky.vercel.app/",   // Your deployed frontend
+  "http://localhost:5174",
+  "https://student-management-system-phi-inky.vercel.app",
 ];
 
-// ✅ Enable dynamic CORS for specific origins
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, Postman, curl)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
+// ✅ CORS Middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
 
-// ✅ Parse JSON bodies
+  // Handle preflight request
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
+// Parse JSON
 app.use(express.json());
 
-// ✅ Ensure 'uploads' directory exists
+// Ensure 'uploads' directory exists
 const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// ✅ Multer setup for file uploads
+// Multer setup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadsDir);
@@ -54,15 +59,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ Serve uploaded files statically
+// Serve uploaded files
 app.use("/uploads", express.static(uploadsDir));
 
-// ✅ Health check route
+// Health check route
 app.get('/', (req, res) => {
   res.send('Hello Bishnu! 🚀 Backend is running.');
 });
 
-// ✅ File upload endpoint
+// File upload route
 app.post("/upload", upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
@@ -70,14 +75,14 @@ app.post("/upload", upload.single("file"), (req, res) => {
   res.json({ filePath: `/uploads/${req.file.filename}` });
 });
 
-// ✅ API Routes
+// Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/students", require("./routes/Student"));
 app.use("/api/courses", require("./routes/Course"));
 app.use("/students/auth", require("./routes/StudentAuth"));
 app.use("/api/profile", require("./routes/Profile"));
 
-// ✅ Start the server
+// Start server
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`🚀 Server running on port ${port}`);
