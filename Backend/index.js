@@ -4,52 +4,64 @@ const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
 const cors = require("cors");
-const connectDB = require("./config/db");
 
+// Load environment variables early
 dotenv.config();
 
-// Connect to MongoDB
+// Connect to MongoDB with fallback URI
+const connectDB = async () => {
+  try {
+    const mongoURI = process.env.MONGO_URI;
+    await require("mongoose").connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("✅ MongoDB connected successfully.");
+  } catch (error) {
+    console.error("❌ MongoDB connection failed:", error.message);
+    process.exit(1);
+  }
+};
+
 connectDB();
 
 const app = express();
 
-// ✅ Allowed origins without trailing slash
-const allowedOrigins = [
-  "http://localhost:5174",
-  "https://student-management-system-phi-inky.vercel.app",
-];
+// Middleware for handling CORS POLICY
+app.use(cors());
+app.use(
+  cors({
+    origin: ["https://localhost:5173",
+      "https://student-management-system-phi-inky.vercel.app/"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  })
+ );
 
-// ✅ CORS Middleware
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
+app.use(express.json()); // 👈 Enable JSON parsing
 
-  // Handle preflight request
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
+// Port fallback in case .env is missing
+const port = process.env.PORT;
 
-  next();
+// 👋 Simple route
+app.get('/', (req, res) => {
+  res.send('Hello Bishnu!');
 });
 
-// Parse JSON
-app.use(express.json());
+// 📂 Ensure uploads directory exists
+const ensureUploadsDirectoryExists = () => {
+  const dir = path.join(__dirname, "uploads");
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+};
+ensureUploadsDirectoryExists();
 
-// Ensure 'uploads' directory exists
-const uploadsDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Multer setup
+// 🧾 Multer config for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadsDir);
+    cb(null, path.join(__dirname, "uploads"));
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
@@ -59,31 +71,22 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Serve uploaded files
-app.use("/uploads", express.static(uploadsDir));
+// Serve uploads statically
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Health check route
-app.get('/', (req, res) => {
-  res.send('Hello Bishnu! 🚀 Backend is running.');
-});
-
-// File upload route
+// Handle file upload request
 app.post("/upload", upload.single("file"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
   res.json({ filePath: `/uploads/${req.file.filename}` });
 });
 
-// Routes
+// 👉 Student routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/students", require("./routes/Student"));
 app.use("/api/courses", require("./routes/Course"));
 app.use("/students/auth", require("./routes/StudentAuth"));
 app.use("/api/profile", require("./routes/Profile"));
 
-// Start server
-const port = process.env.PORT || 5000;
+// 🚀 Start server
 app.listen(port, () => {
-  console.log(`🚀 Server running on port ${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
