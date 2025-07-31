@@ -30,9 +30,9 @@ const Contact = ({ darkMode }) => {
 
   return (
     <section className={`${darkMode ? "bg-dark text-white" : "bg-light text-dark"}`}
-    style={{ paddingTop: "170px" }}
+    // style={{ paddingTop: "170px" }}
     >
-      <div className="container">
+      <div className="container contact-page">
         <div className="text-center mb-5">
           <h2 className="fw-bold">Contact with Team</h2>
           <p className="text-muted mx-auto" style={{ maxWidth: "800px" }}>

@@ -50,10 +50,10 @@ const Banner = () => {
         </div>
 
         {/* Arrows */}
-        <button className="carousel-control-prev custom-arrow" type="button" data-bs-target="#studentCarousel" data-bs-slide="prev" style={{marginLeft: "70px"}}>
+        <button className="carousel-control-prev custom-arrow left-arrow" type="button" data-bs-target="#studentCarousel" data-bs-slide="prev" >
           <span className="carousel-control-prev-icon" aria-hidden="true" />
         </button>
-        <button className="carousel-control-next custom-arrow" type="button" data-bs-target="#studentCarousel" data-bs-slide="next" style={{marginRight: "70px"}}>
+        <button className="carousel-control-next custom-arrow right-arrow" type="button" data-bs-target="#studentCarousel" data-bs-slide="next" >
           <span className="carousel-control-next-icon" aria-hidden="true" />
         </button>
       </div>

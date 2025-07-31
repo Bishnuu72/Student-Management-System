@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BsSun, BsMoon } from "react-icons/bs";
-import StudentContext from '../context/StudentContext';
+import StudentContext from "../context/StudentContext";
 
-const getInitial = (name) => name ? name.charAt(0).toUpperCase() : '?';
+const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : "?");
 
 const Navbar = ({ darkMode, toggleTheme }) => {
   const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
   const location = useLocation();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState(null); // "student" or "admin"
+  const [userRole, setUserRole] = useState(null);
   const dropdownRef = useRef();
   const { user } = useContext(StudentContext);
 
@@ -23,6 +24,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
   }, [location]);
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  const toggleMobileNav = () => setMobileNavOpen(!mobileNavOpen);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -30,12 +32,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
     setIsAuthenticated(false);
     setUserRole(null);
     setDropdownOpen(false);
-
-    if (userRole === "student") {
-      navigate("/student-login");
-    } else {
-      navigate("/admin-login");
-    }
+    navigate(userRole === "student" ? "/student-login" : "/admin-login");
   };
 
   useEffect(() => {
@@ -44,15 +41,12 @@ const Navbar = ({ darkMode, toggleTheme }) => {
         setDropdownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Nav links shown only if not logged in
   const navItems = [
     { to: "/", icon: "fa-house", label: "Home" },
-    // { to: "/about", icon: "fa-circle-info", label: "About" },
     { to: "/contact", icon: "fa-envelope", label: "Contact" },
     !isAuthenticated && { to: "/student-login", icon: "fa-user-graduate", label: "Student" },
     !isAuthenticated && { to: "/admin-login", icon: "fa-user-shield", label: "Admin" },
@@ -60,20 +54,21 @@ const Navbar = ({ darkMode, toggleTheme }) => {
 
   return (
     <nav className={`custom-navbar ${darkMode ? "dark" : "light"}`}>
-      <div className="nav-content">
-        {/* Left: Logo */}
+      <div className="container nav-content">
+        {/* Logo */}
         <div className="logo">
           <Link to="/" className="logo-text">
             <i className="fa-solid fa-users-gear"></i> SMS
           </Link>
         </div>
 
-        {/* Center: Navigation Links */}
-        <ul className="nav-list compact-nav">
+        {/* Navigation Links */}
+        <ul className={`nav-list compact-nav ${mobileNavOpen ? "open" : ""}`}>
           {navItems.map((item, index) => (
             <li
               key={index}
               className={`nav-item ${location.pathname === item.to ? "active" : ""}`}
+              onClick={() => setMobileNavOpen(false)}
             >
               <Link to={item.to} className="nav-icon-link">
                 <i className={`fa-solid ${item.icon}`}></i>
@@ -83,27 +78,43 @@ const Navbar = ({ darkMode, toggleTheme }) => {
           ))}
         </ul>
 
-        {/* Right: Theme toggle + Avatar dropdown only if logged in */}
+        {/* Right Controls */}
         <div className="right-controls">
-          <div className="theme-icon">
-            <button onClick={toggleTheme} className="theme-toggle-btn">
-              {darkMode ? <BsSun size={22} /> : <BsMoon size={22} />}
-            </button>
-          </div>
+          <button onClick={toggleTheme} className="theme-toggle-btn">
+            {darkMode ? <BsSun size={22} /> : <BsMoon size={22} />}
+          </button>
+
           {isAuthenticated && (
             <div className="avatar-dropdown" ref={dropdownRef}>
-              {user && user.avatar ? (
+              {user?.avatar ? (
                 <img
                   src={`${API_BASE_URL}${user.avatar}`}
                   alt="User Avatar"
                   className="avatar-img"
                   onClick={toggleDropdown}
-                  style={{ cursor: "pointer", objectFit: 'cover', width: 40, height: 40, borderRadius: '50%' }}
+                  style={{
+                    cursor: "pointer",
+                    objectFit: "cover",
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                  }}
                 />
               ) : (
                 <div
-                  className="avatar-img rounded-circle d-flex align-items-center justify-content-center"
-                  style={{ width: 40, height: 40, background: '#e0e0e0', fontSize: 18, userSelect: 'none', cursor: 'pointer' }}
+                  className="avatar-img"
+                  style={{
+                    width: 40,
+                    height: 40,
+                    background: "#e0e0e0",
+                    fontSize: 18,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "50%",
+                    userSelect: "none",
+                    cursor: "pointer",
+                  }}
                   onClick={toggleDropdown}
                 >
                   {getInitial(user?.name)}
@@ -117,11 +128,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
                         <i className="fa-solid fa-house"></i> Home
                       </Link>
                       {userRole === "admin" && (
-                        <Link
-                          to="/admin-panel"
-                          className="dropdown-item"
-                          onClick={() => setDropdownOpen(false)}
-                        >
+                        <Link to="/admin-panel" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                           <i className="fa-solid fa-table-columns"></i> Dashboard
                         </Link>
                       )}
@@ -135,11 +142,7 @@ const Navbar = ({ darkMode, toggleTheme }) => {
                         <i className="fa-solid fa-user"></i> Profile
                       </Link>
                       {userRole === "admin" && (
-                        <Link
-                          to="/admin-panel"
-                          className="dropdown-item"
-                          onClick={() => setDropdownOpen(false)}
-                        >
+                        <Link to="/admin-panel" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
                           <i className="fa-solid fa-table-columns"></i> Dashboard
                         </Link>
                       )}
@@ -153,6 +156,14 @@ const Navbar = ({ darkMode, toggleTheme }) => {
             </div>
           )}
         </div>
+
+        {/* Hamburger Menu */}
+          <div className="hamburger-icon" onClick={toggleMobileNav}>
+            <div className="hamburger-line"></div>
+            <div className="hamburger-line"></div>
+            <div className="hamburger-line"></div>
+          </div>
+
       </div>
     </nav>
   );

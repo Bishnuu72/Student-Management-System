@@ -268,6 +268,13 @@
   animation: fadeInUp 1.5s ease;
 }
 
+.left-arrow {
+  margin-left: 70px !important;
+}
+
+.right-arrow {
+  margin-right: 70px !important;
+}
 
 
 @keyframes redGlow {
@@ -315,8 +322,8 @@
 
 /* Indicators Circle Style */
 .custom-indicators button {
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background-color: transparent;
   border: 2px solid #fff;
@@ -325,8 +332,8 @@
 }
 
 .custom-indicators .active {
-  background-color: #00ffff;
-  border-color: #00ffff;
+  background-color: grey;
+  border-color: grey;
 }
 
 
@@ -1546,4 +1553,117 @@ canvas {
 .faq-box {
   border-radius: 20px;
 }
+
+.contact-page {
+  padding-top: 170px;
+}
+
+
+
+/* Make hamburger icon visible and styled */
+.hamburger-icon {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.hamburger-line {
+  width: 100%;
+  height: 3px;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+/* If light theme, adjust color */
+.custom-navbar.light .hamburger-line {
+  background-color: #333;
+}
+
+/* Show hamburger on small screens */
+@media screen and (max-width: 768px) {
+  .hamburger-icon {
+    display: flex;
+  }
+
+  .nav-list {
+    display: none;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.95);
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    padding: 12px 0;
+    border-radius: 0 0 12px 12px;
+    z-index: 999;
+  }
+
+  .nav-list.open {
+    display: flex;
+  }
+
+  .nav-item {
+    text-align: left;
+    padding: 10px 20px;
+  }
+
+  .nav-icon-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+  }
+
+  .custom-navbar.light .nav-icon-link {
+    color: #222;
+  }
+
+  .right-controls {
+    gap: 0.5rem;
+  }
+  .custom-navbar {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px 0px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 390px;
+    margin: 10px 0px;
+    z-index: 1000;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    transition: background 0.3s ease;
+    overflow: visible;
+  }
+
+    .nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .left-arrow {
+    margin-left: 20px !important;
+  }
+
+  .right-arrow {
+    margin-right: 20px !important;
+  }
+
+  .custom-arrow {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  top: 60%;
+  border: 2px solid #fff;
+}
+
+.contact-page {
+  padding-top: 95px;
+}
+
+}
+
 
